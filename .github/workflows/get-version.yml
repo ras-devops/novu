@@ -64,7 +64,7 @@ jobs:
           debug: true
           bump_each_commit: true
           bump_each_commit_patch_pattern: ${{ inputs.bump_each_commit_patch_pattern }}
-          change_path: '${{ inputs.project_path }}/** package.json yarn.lock libs/dal/** libs/shared/**'
+          change_path: 'package.json yarn.lock libs/dal/** libs/shared/**'
           namespace: ${{ inputs.environment_short }}
 
       - name: Set TAGS
