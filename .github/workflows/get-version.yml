@@ -1,0 +1,71 @@
+name: Get version for applications
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+on:
+  workflow_call:
+    inputs:
+      # The environment with the GH secrets environment.
+      environment:
+        required: true
+        type: string
+      environment_short:
+        required: true
+        type: string
+      # The name of the package under which the docker image will be published on GH Packages.
+      package_name:
+        required: true
+        type: string
+      # The path to the project in the monorepo.
+      project_path:
+        required: true
+        type: string
+    outputs:
+      env_tag:
+        description: 'The current an application version'
+        value: ${{ jobs.get_version.outputs.git_version_tag }}
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  get_version:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    environment: ${{ inputs.environment }}
+    outputs:
+      env_tag: ${{ steps.sha_and_tag.outputs.git_tag }}
+      sha: ${{ steps.sha_and_tag.outputs.sha }}
+      sha_short: ${{ steps.sha_and_tag.outputs.sha_short }}
+      git_version_tag: ${{ steps.sha_and_tag.outputs.git_version_tag }}
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+      id-token: write
+    strategy:
+      matrix:
+        name: [ '${{ inputs.package_name }}-ee', '${{ inputs.package_name }}' ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Version.
+        uses: paulhatch/semantic-version@v5.3.0
+        id: semantic
+        with:
+          tag_prefix: "v"
+          version_format: "${major}.${minor}.${patch}"
+          major_pattern: "(MAJOR-API)"
+          major_regexp_flags: "feat(.*)"
+          minor_pattern: "(MINOR-API)"
+          minor_regexp_flags: "perf(.*)"
+          debug: true
+          bump_each_commit: true
+          bump_each_commit_patch_pattern: "(PATH-API)"
+          change_path: 'apps/api/** package.json yarn.lock libs/dal/** libs/shared/**'
+
+      - name: Set TAGS
+        id: sha_and_tag
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "git_tag=v${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
+          echo "git_version_tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT

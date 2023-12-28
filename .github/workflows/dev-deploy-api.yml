@@ -55,29 +55,41 @@ jobs:
 #        with:
 #          submodules: ${{ contains (matrix.name,'-ee') }}
 
-      - name: Version.
-        uses: paulhatch/semantic-version@v5.3.0
-        id: semantic-api
-        with:
-          tag_prefix: "v"
-          version_format: "${major}.${minor}.${patch}"
-          major_pattern: "(MAJOR-API)"
-          major_regexp_flags: "feat(.*)"
-          minor_pattern: "(MINOR-API)"
-          minor_regexp_flags: "perf(.*)"
-          debug: true
-          bump_each_commit: true
-          bump_each_commit_patch_pattern: "(PATH-API)"
-          change_path: 'apps/api/** package.json yarn.lock libs/dal/** libs/shared/**'
-#          namespace: api
+  get_verison:
+    needs: deploy_dev_api
+    uses: ./.github/workflows/get_version.yml
+    with:
+      environment: Development
+      environment_short: dev
+      package_name: novu/api
+      project_path: apps/api
+    secrets: inherit
 
-      - name: Set TAGS
-        id: sha_and_tag
-        run: |
-          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "git_tag=v${{ steps.semantic-api.outputs.version }}" >> $GITHUB_OUTPUT
-          echo "git_version_tag=${{ steps.semantic-api.outputs.version_tag }}" >> $GITHUB_OUTPUT
+############################################################
+#      - name: Version.
+#        uses: paulhatch/semantic-version@v5.3.0
+#        id: semantic-api
+#        with:
+#          tag_prefix: "v"
+#          version_format: "${major}.${minor}.${patch}"
+#          major_pattern: "(MAJOR-API)"
+#          major_regexp_flags: "feat(.*)"
+#          minor_pattern: "(MINOR-API)"
+#          minor_regexp_flags: "perf(.*)"
+#          debug: true
+#          bump_each_commit: true
+#          bump_each_commit_patch_pattern: "(PATH-API)"
+#          change_path: 'apps/api/** package.json yarn.lock libs/dal/** libs/shared/**'
+##          namespace: api
+#
+#      - name: Set TAGS
+#        id: sha_and_tag
+#        run: |
+#          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+#          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+#          echo "git_tag=v${{ steps.semantic-api.outputs.version }}" >> $GITHUB_OUTPUT
+#          echo "git_version_tag=${{ steps.semantic-api.outputs.version_tag }}" >> $GITHUB_OUTPUT
+###############################################################
 
 #      - uses: ./.github/actions/docker/build-api
 #        id: docker_build
