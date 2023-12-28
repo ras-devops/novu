@@ -96,6 +96,12 @@ jobs:
 #          echo "git_tag=v${{ steps.semantic-api.outputs.version }}" >> $GITHUB_OUTPUT
 #          echo "git_version_tag=${{ steps.semantic-api.outputs.version_tag }}" >> $GITHUB_OUTPUT
 ###############################################################
+      - name: Echo image to output
+        id: Echo-image
+        env:
+          IMAGE_TAG: ${{ needs.get_version.outputs.env_tag }}
+        run: |
+          echo "IMAGE_TAG = $IMAGE_TAG
 
       - uses: ./.github/actions/docker/build-api
         id: docker_build
