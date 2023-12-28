@@ -22,8 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     environment: Development
-    permissions:
-      packages: read
     steps:
       - uses: actions/checkout@v3
         with:
