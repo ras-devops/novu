@@ -65,7 +65,7 @@ jobs:
           minor_regexp_flags: "perf(.*)"
           debug: false
           bump_each_commit: true
-          bump_each_commit_patch_pattern: "(PATH)"
+          bump_each_commit_patch_pattern: ""
           change_path: 'apps/api'
 #          change_path: 'apps/api/* package.json yarn.lock libs/dal/** libs/shared/**'
           namespace: api
