@@ -53,18 +53,20 @@ jobs:
 #        with:
 #          submodules: ${{ contains (matrix.name,'-ee') }}
 
-      - name: Version update
+      - name: Version.
         uses: paulhatch/semantic-version@v5.3.0
         id: semantic
         with:
           tag_prefix: "v"
-          major_pattern: "(MAJOR-API)"
-          minor_pattern: "(MINOR-API)"
-          debug: false
-          version_format: "${major}.${minor}.${patch}-${increment}"
+          version_format: "${major}.${minor}.${patch}"
+          major_pattern: "(MAJOR)"
+          major_regexp_flags: "feat(.*)"
+          minor_pattern: "(MINOR)"
+          minor_regexp_flags: "perf(.*)"
+          debug: true
           bump_each_commit: true
-          bump_each_commit_patch_pattern: "(PATH-API)"
-          change_path: 'apps/api package.json yarn.lock libs/dal libs/shared'
+          change_path: 'apps/api/**'
+          namespace: api
 
       - name: Set TAGS
         id: sha_and_tag
