@@ -23,10 +23,7 @@ jobs:
     timeout-minutes: 80
     environment: Development
     permissions:
-      contents: read
-      packages: write
-      deployments: write
-      id-token: write
+      packages: read
     steps:
       - uses: actions/checkout@v3
         with:
