@@ -16,7 +16,7 @@ inputs:
   fork:
     description: 'Whether this is being triggered from a forked repo'
     required: false
-    default: 'false'
+    default: 'true'
   docker_name:
     description: 'Name for docker image'
     required: true
