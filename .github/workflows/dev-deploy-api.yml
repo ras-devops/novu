@@ -65,12 +65,7 @@ jobs:
           minor_regexp_flags: "perf(.*)"
           debug: false
           bump_each_commit: false
-          change_path:
-            - 'package.json'
-            - 'yarn.lock'
-            - 'apps/api/**'
-            - 'libs/dal/**'
-            - 'libs/shared/**'
+          change_path: 'apps/api/**'
           namespace: api
 
       - name: Set TAGS
