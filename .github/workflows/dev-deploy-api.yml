@@ -18,6 +18,24 @@ on:
 #  TF_WORKSPACE: novu-dev
 
 jobs:
+  get_verison:
+    needs: deploy_dev_api
+    uses: ./.github/workflows/get-version.yml
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+      id-token: write
+    with:
+      environment: Development
+      environment_short: dev
+      package_name: novu/api
+      project_path: apps/api
+      major_pattern: "(MAJOR-API)"
+      minor_pattern: "(MINOR-API)"
+      bump_each_commit_patch_pattern: "(PATH-API)"
+    secrets: inherit
+
 #  test_api:
 #    strategy:
 #      matrix:
@@ -54,21 +72,6 @@ jobs:
 #      - uses: ./.github/actions/setup-project
 #        with:
 #          submodules: ${{ contains (matrix.name,'-ee') }}
-
-  get_verison:
-    needs: deploy_dev_api
-    uses: ./.github/workflows/get-version.yml
-    permissions:
-      contents: read
-      packages: write
-      deployments: write
-      id-token: write
-    with:
-      environment: Development
-      environment_short: dev
-      package_name: novu/api
-      project_path: apps/api
-    secrets: inherit
 
 ############################################################
 #      - name: Version.

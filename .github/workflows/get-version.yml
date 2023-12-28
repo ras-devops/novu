@@ -19,6 +19,15 @@ on:
       project_path:
         required: true
         type: string
+      major_pattern:
+        required: true
+        type: string
+      minor_pattern:
+        required: true
+        type: string
+      bump_each_commit_patch_pattern:
+        required: true
+        type: string
     outputs:
       env_tag:
         description: 'The current an application version'
@@ -40,27 +49,23 @@ jobs:
       packages: write
       deployments: write
       id-token: write
-    strategy:
-      matrix:
-        name: [ '${{ inputs.package_name }}-ee', '${{ inputs.package_name }}' ]
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Version.
+      - name: Get version
         uses: paulhatch/semantic-version@v5.3.0
         id: semantic
         with:
           tag_prefix: "v"
           version_format: "${major}.${minor}.${patch}"
-          major_pattern: "(MAJOR-API)"
-          major_regexp_flags: "feat(.*)"
-          minor_pattern: "(MINOR-API)"
-          minor_regexp_flags: "perf(.*)"
+          major_pattern: ${{ inputs.major_pattern }}
+          minor_pattern: ${{ inputs.minor_pattern }}
           debug: true
           bump_each_commit: true
-          bump_each_commit_patch_pattern: "(PATH-API)"
-          change_path: 'apps/api/** package.json yarn.lock libs/dal/** libs/shared/**'
+          bump_each_commit_patch_pattern: ${{ inputs.bump_each_commit_patch_pattern }}
+          change_path: '${{ inputs.project_path }}/** package.json yarn.lock libs/dal/** libs/shared/**'
+          namespace: ${{ inputs.environment_short }}
 
       - name: Set TAGS
         id: sha_and_tag
