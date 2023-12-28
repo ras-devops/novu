@@ -15,6 +15,12 @@ on:
       - 'libs/dal/**'
       - 'libs/shared/**'
 
+permissions:
+  contents: read
+  packages: write
+  deployments: write
+  id-token: write
+
 jobs:
 #  test_webhook:
 #    uses: ./.github/workflows/reusable-webhook-e2e.yml
