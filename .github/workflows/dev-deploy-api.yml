@@ -58,6 +58,11 @@ jobs:
   get_verison:
     needs: deploy_dev_api
     uses: ./.github/workflows/get-version.yml
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+      id-token: write
     with:
       environment: Development
       environment_short: dev
