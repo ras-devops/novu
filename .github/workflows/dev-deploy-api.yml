@@ -58,11 +58,8 @@ jobs:
         id: semantic
         with:
           tag_prefix: "v"
-          version_format: "${major}.${minor}.${patch}"
-          major_pattern: "(MAJOR)"
-          major_regexp_flags: "feat(.*)"
-          minor_pattern: "(MINOR)"
-          minor_regexp_flags: "perf(.*)"
+          major_pattern: "(MAJOR-API)"
+          minor_pattern: "(MINOR-API)"
           debug: false
           bump_each_commit: true
 #          bump_each_commit_patch_pattern: ""
