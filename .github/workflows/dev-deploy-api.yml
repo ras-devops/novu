@@ -61,13 +61,14 @@ jobs:
         with:
           tag_prefix: "v"
           version_format: "${major}.${minor}.${patch}"
-          major_pattern: "(MAJOR)"
+          major_pattern: "(MAJOR-API)"
           major_regexp_flags: "feat(.*)"
-          minor_pattern: "(MINOR)"
+          minor_pattern: "(MINOR-API)"
           minor_regexp_flags: "perf(.*)"
           debug: true
           bump_each_commit: true
-          change_path: 'apps/api/**'
+          bump_each_commit_patch_pattern: "(PATH-API)"
+          change_path: 'apps/api/** package.json yarn.lock libs/dal/** libs/shared/**'
           namespace: api
 
       - name: Set TAGS
