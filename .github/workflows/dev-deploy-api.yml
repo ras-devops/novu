@@ -46,12 +46,12 @@ jobs:
         name: ['novu/api']
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: ${{ contains (matrix.name,'-ee') }}
-          token: ${{ secrets.SUBMODULES_TOKEN }}
+#        with:
+#          submodules: ${{ contains (matrix.name,'-ee') }}
+#          token: ${{ secrets.SUBMODULES_TOKEN }}
       - uses: ./.github/actions/setup-project
-        with:
-          submodules: ${{ contains (matrix.name,'-ee') }}
+#        with:
+#          submodules: ${{ contains (matrix.name,'-ee') }}
 
       - uses: ./.github/actions/docker/build-api
         id: docker_build
