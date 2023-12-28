@@ -9,7 +9,7 @@ on:
       - next
       - main
     paths:
-#      - 'package.json'
+      - 'package.json'
 #      - 'yarn.lock'
 #      - 'apps/api/**'
 #      - 'libs/dal/**'
