@@ -16,7 +16,7 @@ on:
       - 'libs/shared/**'
 
 jobs:
-#  test_webhook:
+  test_webhook:
 #    uses: ./.github/workflows/reusable-webhook-e2e.yml
   - name: Version.
     uses: paulhatch/semantic-version@v5.3.0
