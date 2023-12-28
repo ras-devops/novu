@@ -53,10 +53,38 @@ jobs:
 #        with:
 #          submodules: ${{ contains (matrix.name,'-ee') }}
 
+      - name: Version.
+        uses: paulhatch/semantic-version@v5.3.0
+        id: semantic
+        with:
+          tag_prefix: "v"
+          version_format: "${major}.${minor}.${patch}"
+          major_pattern: "(MAJOR)"
+          major_regexp_flags: "feat(.*)"
+          minor_pattern: "(MINOR)"
+          minor_regexp_flags: "perf(.*)"
+          debug: false
+          bump_each_commit: false
+          change_path:
+            - 'package.json'
+            - 'yarn.lock'
+            - 'apps/api/**'
+            - 'libs/dal/**'
+            - 'libs/shared/**'
+          namespace: api
+
+      - name: Set TAGS
+        id: sha_and_tag
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "git_tag=v${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
+          echo "git_version_tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT
+
       - uses: ./.github/actions/docker/build-api
         id: docker_build
         with:
-          tag: dev-test
+          tag: ${{ steps.sha_and_tag.outputs.git_tag }}
           push: 'true'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           docker_name: ${{ matrix.name }}
