@@ -98,7 +98,7 @@ jobs:
       - uses: ./.github/actions/docker/build-api
         id: docker_build
         with:
-          tag: ${{ jobs.get_version.outputs.env_tag }}
+          tag: ${{ needs.get_version.outputs.env_tag }}
           push: 'true'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           docker_name: ${{ matrix.name }}
