@@ -60,7 +60,7 @@ jobs:
           push: 'true'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           docker_name: ${{ matrix.name }}
-#          bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
+          bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
 
 #      - name: Checkout cloud infra
 #        if: ${{ contains (matrix.name,'-ee') }}
