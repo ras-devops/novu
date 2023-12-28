@@ -64,7 +64,6 @@ jobs:
           bump_each_commit: true
           bump_each_commit_patch_pattern: "(PATH-API)"
           change_path: 'apps/api package.json yarn.lock libs/dal libs/shared'
-          namespace: api
 
       - name: Set TAGS
         id: sha_and_tag
