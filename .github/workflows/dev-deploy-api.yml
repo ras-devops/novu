@@ -62,9 +62,6 @@ jobs:
 #        name: ['novu/api-ee', 'novu/api']
         name: ['novu/api']
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 #        with:
 #          submodules: ${{ contains (matrix.name,'-ee') }}
 #          token: ${{ secrets.SUBMODULES_TOKEN }}
@@ -98,14 +95,14 @@ jobs:
 #          echo "git_version_tag=${{ steps.semantic-api.outputs.version_tag }}" >> $GITHUB_OUTPUT
 ###############################################################
 
-#      - uses: ./.github/actions/docker/build-api
-#        id: docker_build
-#        with:
-#          tag: ${{ steps.sha_and_tag.outputs.git_tag }}
-#          push: 'true'
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          docker_name: ${{ matrix.name }}
-#          bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
+      - uses: ./.github/actions/docker/build-api
+        id: docker_build
+        with:
+          tag: ${{ jobs.get_version.outputs.env_tag }}
+          push: 'true'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          docker_name: ${{ matrix.name }}
+          bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
 
 #      - name: Checkout cloud infra
 #        if: ${{ contains (matrix.name,'-ee') }}
