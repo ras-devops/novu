@@ -61,6 +61,7 @@ jobs:
           major_pattern: "(MAJOR-API)"
           minor_pattern: "(MINOR-API)"
           debug: false
+          version_format: "${major}.${minor}.${patch}-${increment}"
           bump_each_commit: true
           bump_each_commit_patch_pattern: "(PATH-API)"
           change_path: 'apps/api package.json yarn.lock libs/dal libs/shared'
