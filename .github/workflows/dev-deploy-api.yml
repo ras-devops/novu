@@ -46,6 +46,8 @@ jobs:
         name: ['novu/api']
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 #        with:
 #          submodules: ${{ contains (matrix.name,'-ee') }}
 #          token: ${{ secrets.SUBMODULES_TOKEN }}
