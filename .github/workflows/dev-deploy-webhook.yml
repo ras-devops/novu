@@ -24,51 +24,37 @@ permissions:
 jobs:
 #  test_webhook:
 #    uses: ./.github/workflows/reusable-webhook-e2e.yml
-  versioning:
-    runs-on: ubuntu-latest
-    timeout-minutes: 80
-    environment: Development
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Version.
-        uses: paulhatch/semantic-version@v5.3.0
-        id: semantic-webhook
-        with:
-          tag_prefix: "v"
-          version_format: "${major}.${minor}.${patch}"
-          major_pattern: "(MAJOR-WEBHOOK)"
-          major_regexp_flags: "feat(.*)"
-          minor_pattern: "(MINOR-WEBHOOK)"
-          minor_regexp_flags: "perf(.*)"
-          debug: true
-          bump_each_commit: true
-          bump_each_commit_patch_pattern: "(PATH-WEBHOOK)"
-          change_path: 'apps/webhook/** package.json yarn.lock libs/dal/** libs/shared/**'
-
-      - name: Set TAGS
-        id: sha_and_tag
-        run: |
-          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "git_tag=v${{ steps.semantic-webhook.outputs.version }}" >> $GITHUB_OUTPUT
-          echo "git_version_tag=${{ steps.semantic-webhook.outputs.version_tag }}" >> $GITHUB_OUTPUT
-
-  publish_docker_image_webhook:
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
-    needs: versioning
-    uses: ./.github/workflows/reusable-docker.yml
+  get_verison:
+    uses: ./.github/workflows/get-version.yml
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+      id-token: write
     with:
       environment: Development
+      environment_short: dev
       package_name: novu/webhook
       project_path: apps/webhook
-      test_port: 1341
-      health_check: true
-      local_tag: novu-webhook
-      env_tag: dev
-      depot_project_id: jbwgz4l0c0
+      major_pattern: "(MAJOR-WEBHOOK)"
+      minor_pattern: "(MINOR-WEBHOOK)"
+      bump_each_commit_patch_pattern: "(PATH-WEBHOOK)"
     secrets: inherit
+
+#  publish_docker_image_webhook:
+#    if: "!contains(github.event.head_commit.message, 'ci skip')"
+#    needs: get_verison
+#    uses: ./.github/workflows/reusable-docker.yml
+#    with:
+#      environment: Development
+#      package_name: novu/webhook
+#      project_path: apps/webhook
+#      test_port: 1341
+#      health_check: true
+#      local_tag: novu-webhook
+#      env_tag: dev
+#      depot_project_id: jbwgz4l0c0
+#    secrets: inherit
 
 #  deploy_dev_webhook:
 #    if: "!contains(github.event.head_commit.message, 'ci skip')"
