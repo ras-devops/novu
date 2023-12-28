@@ -56,7 +56,7 @@ jobs:
       - uses: ./.github/actions/docker/build-api
         id: docker_build
         with:
-          tag: dev
+          tag: dev-test
           push: 'true'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           docker_name: ${{ matrix.name }}

@@ -47,7 +47,7 @@ runs:
       uses: docker/setup-buildx-action@v2
 
     - name: Login To Registry
-      if: ${{ inputs.fork == 'false' }}
+      if: ${{ inputs.fork == 'true' }}
       shell: bash
       env:
         GH_ACTOR: ${{ github.actor }}
