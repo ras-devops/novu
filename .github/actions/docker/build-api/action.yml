@@ -58,7 +58,7 @@ runs:
     - name: Set Bull MQ Env variable for EE
       shell: bash
       run: |
-        echo "BULL_MQ_PRO_NPM_TOKEN=${{ inputs.bullmq_secret }}" >> $GITHUB_ENV
+        echo "BULL_MQ_PRO_NPM_TOKEN=gug4aim0vat7aefo0ood4iux4oej1Zaa" >> $GITHUB_ENV
       if: contains( inputs.docker_name  , 'ee')
 
     - name: Build with Depot, tag, and test - Regular
@@ -73,7 +73,7 @@ runs:
         GH_PASSWORD: ${{ inputs.github_token }}
       run: |
         set -x
-        cd apps/api && pnpm run docker:build:depot --build-arg BULL_MQ_PRO_TOKEN='gug4aim0vat7aefo0ood4iux4oej1Zaa'
+        cd apps/api && pnpm run docker:build:depot --build-arg BULL_MQ_PRO_TOKEN=${BULL_MQ_PRO_NPM_TOKEN}
     - name: Build with Buildx, tag, and test
       if: ${{ inputs.fork == 'true' }} # Use buildx for forks as they can't access secrets
       shell: bash
