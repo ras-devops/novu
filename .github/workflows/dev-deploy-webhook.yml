@@ -19,6 +19,14 @@ jobs:
 #  test_webhook:
 #    uses: ./.github/workflows/reusable-webhook-e2e.yml
   versioning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    environment: Development
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+      id-token: write
     steps:
     - name: Version.
       uses: paulhatch/semantic-version@v5.3.0
@@ -34,7 +42,6 @@ jobs:
         bump_each_commit: true
         bump_each_commit_patch_pattern: "(PATH-WEBHOOK)"
         change_path: 'apps/webhook/** package.json yarn.lock libs/dal/** libs/shared/**'
-  #          namespace: api
 
     - name: Set TAGS
       id: sha_and_tag
