@@ -76,7 +76,7 @@ jobs:
           minor_pattern: ${{ inputs.minor_pattern }}
           debug: true
           bump_each_commit: true
-          bump_each_commit_patch_pattern: ${{ inputs.bump_each_commit_patch_pattern }}
+#          bump_each_commit_patch_pattern: ${{ inputs.bump_each_commit_patch_pattern }}
           change_path: ${{ inputs.change_path }}
 
       - name: Set TAGS
