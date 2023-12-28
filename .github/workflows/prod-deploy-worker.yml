@@ -65,7 +65,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           GH_ACTOR: ${{ github.actor }}
           GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
-          DEPOT_PROJECT_ID: 6sj0jfv0n7
+          DEPOT_PROJECT_ID: jbwgz4l0c0
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
           cd apps/worker && pnpm --silent --workspace-root pnpm-context -- apps/worker/Dockerfile | depot build --build-arg BULL_MQ_PRO_TOKEN=${BULL_MQ_PRO_NPM_TOKEN} --build-arg PACKAGE_PATH=apps/worker - -t novu-worker --load

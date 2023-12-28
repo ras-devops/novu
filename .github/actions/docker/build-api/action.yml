@@ -68,13 +68,13 @@ runs:
         REGISTRY_OWNER: ras-devops
         DOCKER_NAME: ${{ inputs.docker_name }}
         IMAGE_TAG: ${{ github.sha }}
-        DEPOT_PROJECT_ID: 6sj0jfv0n7
+        DEPOT_PROJECT_ID: jbwgz4l0c0
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
       run: |
         set -x
-        cd apps/api && pnpm run docker:build:depot --build-arg BULL_MQ_PRO_TOKEN=${BULL_MQ_PRO_NPM_TOKEN}
-
+#        cd apps/api && pnpm run docker:build:depot --build-arg BULL_MQ_PRO_TOKEN=${BULL_MQ_PRO_NPM_TOKEN}
+        cd apps/api && pnpm run docker:build:depot --build-arg BULL_MQ_PRO_TOKEN=gug4aim0vat7aefo0ood4iux4oej1Zaa
     - name: Build with Buildx, tag, and test
       if: ${{ inputs.fork == 'true' }} # Use buildx for forks as they can't access secrets
       shell: bash
@@ -93,7 +93,7 @@ runs:
         REGISTRY_OWNER: ras-devops
         DOCKER_NAME: ${{ inputs.docker_name }}
         IMAGE_TAG: ${{ github.sha }}
-        DEPOT_PROJECT_ID: 6sj0jfv0n7
+        DEPOT_PROJECT_ID: jbwgz4l0c0
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
       run: |
