@@ -33,8 +33,18 @@ on:
         type: string
     outputs:
       env_tag:
-        description: 'The current an application version'
+        description: 'The current version of the application with suffix'
+        value: ${{ jobs.get_version.outputs.version_tag }}
+      sha:
+        description: 'The current sha of the code'
         value: ${{ jobs.get_version.outputs.git_version_tag }}
+      sha_short:
+        description: 'The current sha short of the code'
+        value: ${{ jobs.get_version.outputs.git_version_tag }}
+      version:
+        description: 'The current version of the application without suffix'
+        value: ${{ jobs.get_version.outputs.version }}
+
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -74,5 +84,5 @@ jobs:
         run: |
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "git_tag=v${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
-          echo "git_version_tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT
+          echo "version=v${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
+          echo "version_tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT
