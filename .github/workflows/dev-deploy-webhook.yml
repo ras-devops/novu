@@ -28,28 +28,31 @@ jobs:
       deployments: write
       id-token: write
     steps:
-    - name: Version.
-      uses: paulhatch/semantic-version@v5.3.0
-      id: semantic-webhook
-      with:
-        tag_prefix: "v"
-        version_format: "${major}.${minor}.${patch}"
-        major_pattern: "(MAJOR-WEBHOOK)"
-        major_regexp_flags: "feat(.*)"
-        minor_pattern: "(MINOR-WEBHOOK)"
-        minor_regexp_flags: "perf(.*)"
-        debug: true
-        bump_each_commit: true
-        bump_each_commit_patch_pattern: "(PATH-WEBHOOK)"
-        change_path: 'apps/webhook/** package.json yarn.lock libs/dal/** libs/shared/**'
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Version.
+        uses: paulhatch/semantic-version@v5.3.0
+        id: semantic-webhook
+        with:
+          tag_prefix: "v"
+          version_format: "${major}.${minor}.${patch}"
+          major_pattern: "(MAJOR-WEBHOOK)"
+          major_regexp_flags: "feat(.*)"
+          minor_pattern: "(MINOR-WEBHOOK)"
+          minor_regexp_flags: "perf(.*)"
+          debug: true
+          bump_each_commit: true
+          bump_each_commit_patch_pattern: "(PATH-WEBHOOK)"
+          change_path: 'apps/webhook/** package.json yarn.lock libs/dal/** libs/shared/**'
 
-    - name: Set TAGS
-      id: sha_and_tag
-      run: |
-        echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-        echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-        echo "git_tag=v${{ steps.semantic-webhook.outputs.version }}" >> $GITHUB_OUTPUT
-        echo "git_version_tag=${{ steps.semantic-webhook.outputs.version_tag }}" >> $GITHUB_OUTPUT
+      - name: Set TAGS
+        id: sha_and_tag
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "git_tag=v${{ steps.semantic-webhook.outputs.version }}" >> $GITHUB_OUTPUT
+          echo "git_version_tag=${{ steps.semantic-webhook.outputs.version_tag }}" >> $GITHUB_OUTPUT
 
   publish_docker_image_webhook:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
