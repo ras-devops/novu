@@ -16,7 +16,7 @@ inputs:
   fork:
     description: 'Whether this is being triggered from a forked repo'
     required: false
-    default: 'false'
+    default: 'true'
   docker_name:
     description: 'Name for docker image'
     required: true
@@ -74,10 +74,10 @@ runs:
     #     cd apps/worker && pnpm run docker:build:depot --build-arg BULL_MQ_PRO_TOKEN=${BULL_MQ_PRO_NPM_TOKEN}
 
     - name: Build with Buildx, tag, and test
-      # if: ${{ inputs.fork == 'true' }} # Use buildx for forks as they can't access secrets
+      if: ${{ inputs.fork == 'true' }} # Use buildx for forks as they can't access secrets
       shell: bash
       env:
-        REGISTRY_OWNER: novuhq
+        REGISTRY_OWNER: ras-devops
         DOCKER_NAME: ${{ inputs.docker_name }}
         IMAGE_TAG: ${{ github.sha }}
         DEPOT_PROJECT_ID: jbwgz4l0c0
@@ -91,7 +91,7 @@ runs:
       id: build-image
       shell: bash
       env:
-        REGISTRY_OWNER: novuhq
+        REGISTRY_OWNER: ras-devops
         DOCKER_NAME: ${{ inputs.docker_name }}
         IMAGE_TAG: ${{ github.sha }}
         DEPOT_PROJECT_ID: jbwgz4l0c0
@@ -112,7 +112,7 @@ runs:
       if: ${{ inputs.tag }}
       shell: bash
       env:
-        REGISTRY_OWNER: novuhq
+        REGISTRY_OWNER: ras-devops
         DOCKER_NAME: ${{ inputs.docker_name }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
@@ -132,7 +132,7 @@ runs:
       if: ${{ inputs.push == 'true' && inputs.tag }}
       shell: bash
       env:
-        REGISTRY_OWNER: novuhq
+        REGISTRY_OWNER: ras-devops
         DOCKER_NAME: ${{ inputs.docker_name }}
       run: |
         docker push ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:${{ inputs.tag }}
