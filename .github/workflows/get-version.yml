@@ -79,7 +79,7 @@ jobs:
 #          bump_each_commit_patch_pattern: ${{ inputs.bump_each_commit_patch_pattern }}
 #          change_path: ${{ inputs.change_path }}
 
-      - name: Set TAGS
+      - name: 'Set TAGS. Version: ${{ steps.semantic.outputs.version_tag }}'
         id: sha_and_tag
         run: |
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT

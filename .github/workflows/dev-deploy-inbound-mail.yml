@@ -71,7 +71,7 @@ jobs:
           DOCKER_NAME: ${{ matrix.name }}
           IMAGE_TAG: ${{ github.sha }}
           GH_ACTOR: ${{ github.actor }}
-          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
+          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           DEPOT_PROJECT_ID: jbwgz4l0c0
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
@@ -89,7 +89,7 @@ jobs:
 #        uses: actions/checkout@master
 #        with:
 #          repository: ras-devops/cloud-infra
-#          token: ${{ secrets.GH_PACKAGES }}
+#          token: ${{ secrets.GITHUB_TOKEN }}
 #          path: cloud-infra
 #
 #      - name: Configure AWS credentials
