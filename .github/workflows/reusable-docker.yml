@@ -64,28 +64,29 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        name: [ '${{ inputs.package_name }}-ee', '${{ inputs.package_name }}' ]
+#        name: [ '${{ inputs.package_name }}-ee', '${{ inputs.package_name }}' ]
+        name: [ '${{ inputs.package_name }}' ]
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: ${{ contains (matrix.name,'-ee') }}
-          token: ${{ secrets.SUBMODULES_TOKEN }}
+#        with:
+#          submodules: ${{ contains (matrix.name,'-ee') }}
+#          token: ${{ secrets.SUBMODULES_TOKEN }}
 
       - uses: ./.github/actions/setup-project
-        with:
-          slim: 'true'
-          submodules: ${{ contains (matrix.name,'-ee') }}
+#        with:
+#          slim: 'true'
+#          submodules: ${{ contains (matrix.name,'-ee') }}
 
-      - name: Setup Depot
-        uses: depot/setup-action@v1
-        with:
-          oidc: true
+#      - name: Setup Depot
+#        uses: depot/setup-action@v1
+#        with:
+#          oidc: true
 
       - name: Build, tag, and push image to ghcr.io
         id: build-image
-        if: ${{ inputs.env_tag == 'dev' || inputs.env_tag == 'stg' }}
+        if: ${{ inputs.environment == 'Development' || inputs.environment == 'Staging' }}
         env:
-          REGISTRY_OWNER: novuhq
+          REGISTRY_OWNER: ras-devops
           DOCKER_NAME: ${{ matrix.name }}
           LOCAL_TAG: ${{ inputs.local_tag }}
           IMAGE_TAG: ${{ github.sha }}
@@ -104,9 +105,9 @@ jobs:
 
       - name: Production build, tag, and push image to ghcr.io
         id: build-prod-image
-        if: ${{ inputs.env_tag == 'prod' }}
+        if: ${{ inputs.env_tag == 'Production' }}
         env:
-          REGISTRY_OWNER: novuhq
+          REGISTRY_OWNER: ras-devops
           DOCKER_NAME: ${{ matrix.name }}
           LOCAL_TAG: ${{ inputs.local_tag }}
           IMAGE_TAG: ${{ github.sha }}
@@ -128,7 +129,7 @@ jobs:
       - name: Save image to output
         id: save-image-to-output
         env:
-          REGISTRY_OWNER: novuhq
+          REGISTRY_OWNER: ras-devops
           DOCKER_NAME: ${{ matrix.name }}
           IMAGE_TAG: ${{ github.sha }}
           OUTPUT_NAME: ${{ contains(matrix.name,'-ee') && 'IMAGE_EE' || 'IMAGE' }}
@@ -139,7 +140,7 @@ jobs:
         id: health-check
         if: ${{ inputs.health_check == 'true' && (steps.build-image.outcome == 'success' || steps.build-prod-image.outcome == 'success') }}
         env:
-          REGISTRY_OWNER: novuhq
+          REGISTRY_OWNER: ras-devops
           DOCKER_NAME: ${{ matrix.name }}
           LOCAL_TAG: ${{ inputs.local_tag }}
           IMAGE_TAG: ${{ github.sha }}
