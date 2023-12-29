@@ -61,7 +61,7 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
-          REGISTRY_OWNER: novuhq
+          REGISTRY_OWNER: ras-devops
           DOCKER_NAME: ${{ matrix.name }}
           IMAGE_TAG: ${{ github.sha }}
           GH_ACTOR: ${{ github.actor }}
@@ -78,79 +78,79 @@ jobs:
           docker push ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:dev
           docker push ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
           echo "IMAGE=ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-      - name: Checkout cloud infra
-        uses: actions/checkout@master
-        with:
-          repository: novuhq/cloud-infra
-          token: ${{ secrets.GH_PACKAGES }}
-          path: cloud-infra
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-2
-
-      - name: Terraform setup
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-          terraform_version: 1.5.5
-          terraform_wrapper: false
-
-      - name: Terraform Init
-        working-directory: cloud-infra/terraform/novu/aws
-        run: terraform init
-
-      - name: Terraform get output
-        working-directory: cloud-infra/terraform/novu/aws
-        id: terraform
-        run: |
-          echo "inbound_mail_ecs_container_name=$(terraform output -json inbound_mail_ecs_container_name | jq -r .)" >> $GITHUB_ENV
-          echo "inbound_mail_ecs_service=$(terraform output -json inbound_mail_ecs_service | jq -r .)" >> $GITHUB_ENV
-          echo "inbound_mail_ecs_cluster=$(terraform output -json inbound_mail_ecs_cluster | jq -r .)" >> $GITHUB_ENV
-          echo "inbound_mail_task_name=$(terraform output -json inbound_mail_task_name | jq -r .)" >> $GITHUB_ENV
-
-      - name: Download task definition
-        run: |
-          aws ecs describe-task-definition --task-definition ${{ env.inbound_mail_task_name }} \
-          --query taskDefinition > task-definition.json
-
-      - name: Render Amazon ECS task definition
-        id: render-web-container
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: ${{ env.inbound_mail_ecs_container_name }}
-          image: ${{ steps.build-image.outputs.IMAGE }}
-
-      - name: Deploy to Amazon ECS service
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.render-web-container.outputs.task-definition }}
-          service: ${{ env.inbound_mail_ecs_service }}
-          cluster: ${{ env.inbound_mail_ecs_cluster }}
-          wait-for-service-stability: true
-
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@main
-        with:
-          path: apps/inbound-mail
-
-      - name: Create Sentry release
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: novu-r9
-          SENTRY_PROJECT: inbound-mail
-        with:
-          version: ${{ steps.package-version.outputs.current-version}}
-          environment: dev
-          version_prefix: v
-          sourcemaps: apps/inbound-mail/dist
-          ignore_empty: true
-          ignore_missing: true
-          url_prefix: "~"
+#
+#      - name: Checkout cloud infra
+#        uses: actions/checkout@master
+#        with:
+#          repository: ras-devops/cloud-infra
+#          token: ${{ secrets.GH_PACKAGES }}
+#          path: cloud-infra
+#
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: eu-west-2
+#
+#      - name: Terraform setup
+#        uses: hashicorp/setup-terraform@v1
+#        with:
+#          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+#          terraform_version: 1.5.5
+#          terraform_wrapper: false
+#
+#      - name: Terraform Init
+#        working-directory: cloud-infra/terraform/novu/aws
+#        run: terraform init
+#
+#      - name: Terraform get output
+#        working-directory: cloud-infra/terraform/novu/aws
+#        id: terraform
+#        run: |
+#          echo "inbound_mail_ecs_container_name=$(terraform output -json inbound_mail_ecs_container_name | jq -r .)" >> $GITHUB_ENV
+#          echo "inbound_mail_ecs_service=$(terraform output -json inbound_mail_ecs_service | jq -r .)" >> $GITHUB_ENV
+#          echo "inbound_mail_ecs_cluster=$(terraform output -json inbound_mail_ecs_cluster | jq -r .)" >> $GITHUB_ENV
+#          echo "inbound_mail_task_name=$(terraform output -json inbound_mail_task_name | jq -r .)" >> $GITHUB_ENV
+#
+#      - name: Download task definition
+#        run: |
+#          aws ecs describe-task-definition --task-definition ${{ env.inbound_mail_task_name }} \
+#          --query taskDefinition > task-definition.json
+#
+#      - name: Render Amazon ECS task definition
+#        id: render-web-container
+#        uses: aws-actions/amazon-ecs-render-task-definition@v1
+#        with:
+#          task-definition: task-definition.json
+#          container-name: ${{ env.inbound_mail_ecs_container_name }}
+#          image: ${{ steps.build-image.outputs.IMAGE }}
+#
+#      - name: Deploy to Amazon ECS service
+#        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+#        with:
+#          task-definition: ${{ steps.render-web-container.outputs.task-definition }}
+#          service: ${{ env.inbound_mail_ecs_service }}
+#          cluster: ${{ env.inbound_mail_ecs_cluster }}
+#          wait-for-service-stability: true
+#
+#      - name: get-npm-version
+#        id: package-version
+#        uses: martinbeentjes/npm-get-version-action@main
+#        with:
+#          path: apps/inbound-mail
+#
+#      - name: Create Sentry release
+#        uses: getsentry/action-release@v1
+#        env:
+#          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+#          SENTRY_ORG: novu-r9
+#          SENTRY_PROJECT: inbound-mail
+#        with:
+#          version: ${{ steps.package-version.outputs.current-version}}
+#          environment: dev
+#          version_prefix: v
+#          sourcemaps: apps/inbound-mail/dist
+#          ignore_empty: true
+#          ignore_missing: true
+#          url_prefix: "~"
