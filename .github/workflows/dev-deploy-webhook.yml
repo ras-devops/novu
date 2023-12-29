@@ -24,7 +24,7 @@ permissions:
 jobs:
 #  test_webhook:
 #    uses: ./.github/workflows/reusable-webhook-e2e.yml
-  get_verison:
+  get_version:
     uses: ./.github/workflows/get-version.yml
     permissions:
       contents: read
