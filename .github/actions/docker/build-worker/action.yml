@@ -63,7 +63,7 @@ runs:
     #   if: ${{ inputs.fork == 'false' }} # Use buildx for forks as they can't access secrets
     #   shell: bash
     #   env:
-    #     REGISTRY_OWNER: novuhq
+    #     REGISTRY_OWNER: ras-devops
     #     DOCKER_NAME: ${{ inputs.docker_name }}
     #     IMAGE_TAG: ${{ github.sha }}
     #     DEPOT_PROJECT_ID: jbwgz4l0c0
@@ -122,7 +122,7 @@ runs:
       if: ${{ inputs.push == 'true' }}
       shell: bash
       env:
-        REGISTRY_OWNER: novuhq
+        REGISTRY_OWNER: ras-devops
         DOCKER_NAME: ${{ inputs.docker_name }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
