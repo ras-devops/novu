@@ -97,7 +97,6 @@ jobs:
           DEPOT_PROJECT_ID: ${{ inputs.depot_project_id }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
-#          cd $PROJECT_PATH && npm run docker:build:depot
           cd $PROJECT_PATH && pnpm run docker:build
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$ENV_TAG
@@ -119,7 +118,6 @@ jobs:
           DEPOT_PROJECT_ID:  ${{ inputs.depot_project_id }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
-#          cd $PROJECT_PATH && npm run docker:build:depot
           cd $PROJECT_PATH && pnpm run docker:build
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$ENV_TAG
