@@ -93,7 +93,7 @@ jobs:
           ENV_TAG: ${{ inputs.env_tag }}
           PROJECT_PATH: ${{ inputs.project_path }}
           GH_ACTOR: ${{ github.actor }}
-          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
+          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           DEPOT_PROJECT_ID: ${{ inputs.depot_project_id }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
@@ -114,7 +114,7 @@ jobs:
           ENV_TAG: ${{ inputs.env_tag }}
           PROJECT_PATH: ${{ inputs.project_path }}
           GH_ACTOR: ${{ github.actor }}
-          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
+          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           DEPOT_PROJECT_ID:  ${{ inputs.depot_project_id }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
@@ -146,7 +146,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           TEST_PORT: ${{ inputs.test_port }}
           GH_ACTOR: ${{ github.actor }}
-          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
+          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
 
