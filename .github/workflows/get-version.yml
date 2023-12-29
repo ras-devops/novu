@@ -11,26 +11,6 @@ on:
       environment_short:
         required: true
         type: string
-      # The name of the package under which the docker image will be published on GH Packages.
-      package_name:
-        required: true
-        type: string
-      # The path to the project in the monorepo.
-      project_path:
-        required: true
-        type: string
-      major_pattern:
-        required: true
-        type: string
-      minor_pattern:
-        required: true
-        type: string
-      bump_each_commit_patch_pattern:
-        required: true
-        type: string
-#      change_path:
-#        required: true
-#        type: string
     outputs:
       env_tag:
         description: 'The current version of the application with suffix'
@@ -72,12 +52,11 @@ jobs:
         with:
           tag_prefix: "v"
           version_format: "${major}.${minor}.${patch}-${increment}"
-          major_pattern: ${{ inputs.major_pattern }}
-          minor_pattern: ${{ inputs.minor_pattern }}
+          major_pattern: "(MAJOR)"
+          minor_pattern: "(MINOR)"
           debug: true
           bump_each_commit: true
-          bump_each_commit_patch_pattern: ${{ inputs.bump_each_commit_patch_pattern }}
-#          change_path: ${{ inputs.change_path }}
+          bump_each_commit_patch_pattern: "(PATH)"
 
       - name: 'Set TAGS. Version: ${{ steps.semantic.outputs.version_tag }}'
         id: sha_and_tag

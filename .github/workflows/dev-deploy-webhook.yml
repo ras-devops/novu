@@ -34,12 +34,6 @@ jobs:
     with:
       environment: Development
       environment_short: dev
-      package_name: novu/webhook
-      project_path: apps/webhook
-      major_pattern: "(MAJOR-WEBHOOK)"
-      minor_pattern: "(MINOR-WEBHOOK)"
-      bump_each_commit_patch_pattern: "(PATH-WEBHOOK)"
-#      change_path: 'apps/webhook package.json yarn.lock libs/dal libs/shared'
     secrets: inherit
 
   publish_docker_image_webhook:

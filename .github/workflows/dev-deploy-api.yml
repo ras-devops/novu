@@ -28,12 +28,6 @@ jobs:
     with:
       environment: Development
       environment_short: dev
-      package_name: novu/api
-      project_path: apps/api
-      major_pattern: "(MAJOR-API)"
-      minor_pattern: "(MINOR-API)"
-      bump_each_commit_patch_pattern: "(PATH-API)"
-#      change_path: 'apps/api package.json yarn.lock libs/dal libs/shared'
     secrets: inherit
 
 #  test_api:
