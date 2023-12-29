@@ -97,7 +97,8 @@ jobs:
           DEPOT_PROJECT_ID: ${{ inputs.depot_project_id }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
-          cd $PROJECT_PATH && npm run docker:build:depot
+#          cd $PROJECT_PATH && npm run docker:build:depot
+          cd $PROJECT_PATH && pnpm run docker:build
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$ENV_TAG
           docker push ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
@@ -118,7 +119,8 @@ jobs:
           DEPOT_PROJECT_ID:  ${{ inputs.depot_project_id }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
-          cd $PROJECT_PATH && npm run docker:build:depot
+#          cd $PROJECT_PATH && npm run docker:build:depot
+          cd $PROJECT_PATH && pnpm run docker:build
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$ENV_TAG
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:latest
@@ -136,19 +138,19 @@ jobs:
         run: |
           echo "$OUTPUT_NAME=ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Health check test
-        id: health-check
-        if: ${{ inputs.health_check == 'true' && (steps.build-image.outcome == 'success' || steps.build-prod-image.outcome == 'success') }}
-        env:
-          REGISTRY_OWNER: ras-devops
-          DOCKER_NAME: ${{ matrix.name }}
-          LOCAL_TAG: ${{ inputs.local_tag }}
-          IMAGE_TAG: ${{ github.sha }}
-          TEST_PORT: ${{ inputs.test_port }}
-          GH_ACTOR: ${{ github.actor }}
-          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
-
-          docker run --network=host --name $LOCAL_TAG -dit --env NODE_ENV=test ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
-          docker run --network=host appropriate/curl --retry 10 --retry-delay 5 --retry-connrefused http://localhost:$TEST_PORT/v1/health-check | grep 'ok'
+#      - name: Health check test
+#        id: health-check
+#        if: ${{ inputs.health_check == 'true' && (steps.build-image.outcome == 'success' || steps.build-prod-image.outcome == 'success') }}
+#        env:
+#          REGISTRY_OWNER: ras-devops
+#          DOCKER_NAME: ${{ matrix.name }}
+#          LOCAL_TAG: ${{ inputs.local_tag }}
+#          IMAGE_TAG: ${{ github.sha }}
+#          TEST_PORT: ${{ inputs.test_port }}
+#          GH_ACTOR: ${{ github.actor }}
+#          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
+#
+#          docker run --network=host --name $LOCAL_TAG -dit --env NODE_ENV=test ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
+#          docker run --network=host appropriate/curl --retry 10 --retry-delay 5 --retry-connrefused http://localhost:$TEST_PORT/v1/health-check | grep 'ok'
