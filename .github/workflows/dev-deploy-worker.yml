@@ -45,7 +45,7 @@ jobs:
       major_pattern: "(MAJOR-WORKER)"
       minor_pattern: "(MINOR-WORKER)"
       bump_each_commit_patch_pattern: "(PATH-WORKER)"
-      change_path: 'apps/worker package.json yarn.lock libs/dal libs/shared'
+#      change_path: 'apps/worker package.json yarn.lock libs/dal libs/shared'
     secrets: inherit
 
   build_dev_worker:
