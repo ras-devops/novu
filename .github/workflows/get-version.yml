@@ -34,7 +34,7 @@ on:
     outputs:
       env_tag:
         description: 'The current version of the application with suffix'
-        value: ${{ jobs.get_version.outputs.version_tag }}
+        value: ${{ jobs.get_version.outputs.tag }}
       sha:
         description: 'The current sha of the code'
         value: ${{ jobs.get_version.outputs.sha }}
@@ -53,7 +53,7 @@ jobs:
     timeout-minutes: 80
     environment: ${{ inputs.environment }}
     outputs:
-      env_tag: ${{ steps.sha_and_tag.outputs.version_tag }}
+      tag: ${{ steps.sha_and_tag.outputs.tag }}
       sha: ${{ steps.sha_and_tag.outputs.sha }}
       sha_short: ${{ steps.sha_and_tag.outputs.sha_short }}
       version: ${{ steps.sha_and_tag.outputs.version }}
@@ -85,4 +85,4 @@ jobs:
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "version=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
-          echo "version_tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT
+          echo "tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT
