@@ -77,9 +77,14 @@ jobs:
         id: Echo-image
         env:
           IMAGE_TAG: ${{ needs.get_version.outputs.env_tag }}
+          TEST1: ${{ needs.get_version.outputs.sha_short }}
+          TEST2: ${{ needs.get_version.outputs.sha }}
+          TEST3: ${{ needs.get_version.outputs.version }}
         run: |
           echo "IMAGE_TAG = $IMAGE_TAG"
-          echo "IMAGE_TAG = ${{ env.IMAGE_TAG }}"
+          echo "TEST1 = $TEST1"
+          echo "TEST2 = $TEST2"
+          echo "TEST3 = $TEST3"
 
       - uses: ./.github/actions/docker/build-worker
         id: docker_build

@@ -17,6 +17,12 @@ on:
 env:
   TF_WORKSPACE: novu-dev
 
+permissions:
+  contents: read
+  packages: write
+  deployments: write
+  id-token: write
+
 jobs:
   test_inbound_mail:
     strategy:
