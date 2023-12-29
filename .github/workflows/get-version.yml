@@ -28,9 +28,9 @@ on:
       bump_each_commit_patch_pattern:
         required: true
         type: string
-      change_path:
-        required: true
-        type: string
+#      change_path:
+#        required: true
+#        type: string
     outputs:
       env_tag:
         description: 'The current version of the application with suffix'
@@ -77,7 +77,7 @@ jobs:
           debug: true
           bump_each_commit: true
 #          bump_each_commit_patch_pattern: ${{ inputs.bump_each_commit_patch_pattern }}
-          change_path: ${{ inputs.change_path }}
+#          change_path: ${{ inputs.change_path }}
 
       - name: Set TAGS
         id: sha_and_tag
