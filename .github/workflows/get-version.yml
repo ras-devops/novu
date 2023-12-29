@@ -71,12 +71,12 @@ jobs:
         id: semantic
         with:
           tag_prefix: "v"
-          version_format: "${major}.${minor}.${patch}"
+          version_format: "${major}.${minor}.${patch}-${increment}"
           major_pattern: ${{ inputs.major_pattern }}
           minor_pattern: ${{ inputs.minor_pattern }}
           debug: true
           bump_each_commit: true
-#          bump_each_commit_patch_pattern: ${{ inputs.bump_each_commit_patch_pattern }}
+          bump_each_commit_patch_pattern: ${{ inputs.bump_each_commit_patch_pattern }}
 #          change_path: ${{ inputs.change_path }}
 
       - name: 'Set TAGS. Version: ${{ steps.semantic.outputs.version_tag }}'
