@@ -55,7 +55,7 @@ jobs:
           major_pattern: "(MAJOR)"
           minor_pattern: "(MINOR)"
           debug: true
-          bump_each_commit: false
+          bump_each_commit: true
           bump_each_commit_patch_pattern: "(PATH)"
 
       - name: 'Set TAGS. Version: ${{ steps.semantic.outputs.version_tag }}'
