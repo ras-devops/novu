@@ -58,7 +58,7 @@ jobs:
       docker_image: ${{ steps.save-image-to-output.outputs.IMAGE }}
       docker_image_ee: ${{ steps.save-image-to-output.outputs.IMAGE_EE }}
     permissions:
-      contents: read
+      contents: write
       packages: write
       deployments: write
       id-token: write
