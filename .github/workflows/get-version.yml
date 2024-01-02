@@ -61,14 +61,19 @@ jobs:
 #          bump_each_commit: true
 #          bump_each_commit_patch_pattern: "(PATH)"
 
-      - name: 'Set TAGS. Version: ${{ steps.semantic.outputs.version_tag }}'
+      - name: Set TAGS
         id: sha_and_tag
         run: |
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "version=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
-          echo "tag=${{ steps.semantic.outputs.next_version }}" >> $GITHUB_OUTPUT
           echo "current_version=${{ steps.semantic.outputs.current_version }}" >> $GITHUB_OUTPUT
+          if [[ -z "${{ steps.semantic.outputs.next_version }}"]]; then
+            echo "tag=$(git tag -l | tail -1)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${{ steps.semantic.outputs.next_version }}" >> $GITHUB_OUTPUT
+          fi
+
 #          if [[ "${{ steps.semantic.outputs.version }}" == *-0 ]]; then
 #
 #            echo "tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT
