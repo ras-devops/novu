@@ -68,7 +68,7 @@ jobs:
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "version=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
           echo "current_version=${{ steps.semantic.outputs.current_version }}" >> $GITHUB_OUTPUT
-          if [[ -z "${{ steps.semantic.outputs.next_version }}"]]; then
+          if [[ -z "${{ steps.semantic.outputs.next_version }}" ]]; then
             echo "tag=$(git tag -l | tail -1)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           else
             echo "tag=${{ steps.semantic.outputs.next_version }}" >> $GITHUB_OUTPUT
