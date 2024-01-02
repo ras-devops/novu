@@ -64,5 +64,9 @@ jobs:
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "version=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
-          echo "tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT
           echo "previous_version=${{ steps.semantic.outputs.previous_version }}" >> $GITHUB_OUTPUT
+          if [[ "${{ steps.semantic.outputs.version }}" == *-0 ]]; then
+            echo "tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${{ steps.semantic.outputs.version_tag }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          fi
