@@ -58,6 +58,27 @@ jobs:
           bump_each_commit: true
           bump_each_commit_patch_pattern: "(PATH)"
 
+      - name: Get previous tag
+        id: previoustag
+        uses: 'WyriHaximus/github-action-get-previous-tag@v1'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get next minor version
+        id: semver
+        uses: 'WyriHaximus/github-action-next-semvers@v1'
+        with:
+          version: ${{ steps.previoustag.outputs.tag }}
+
+      - name: Create release
+        id: create_release_id
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.semver.outputs.patch }}
+          release_name: Release ${{ steps.semver.outputs.patch }}
+
       - name: 'Set TAGS. Version: ${{ steps.semantic.outputs.version_tag }}'
         id: sha_and_tag
         run: |
@@ -66,7 +87,12 @@ jobs:
           echo "version=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
           echo "previous_version=${{ steps.semantic.outputs.previous_version }}" >> $GITHUB_OUTPUT
           if [[ "${{ steps.semantic.outputs.version }}" == *-0 ]]; then
-            echo "tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT
+            echo "tag=${{ steps.semver.outputs.patch }}" >> $GITHUB_OUTPUT
           else
-            echo "tag=${{ steps.semantic.outputs.version_tag }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+            echo "tag=${{ steps.semver.outputs.patch }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           fi
+#          if [[ "${{ steps.semantic.outputs.version }}" == *-0 ]]; then
+#            echo "tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT
+#          else
+#            echo "tag=${{ steps.semantic.outputs.version_tag }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+#          fi
