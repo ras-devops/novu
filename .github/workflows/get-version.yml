@@ -38,7 +38,7 @@ jobs:
       sha_short: ${{ steps.sha_and_tag.outputs.sha_short }}
       version: ${{ steps.sha_and_tag.outputs.version }}
     permissions:
-      contents: read
+      contents: write
       packages: write
       deployments: write
       id-token: write
