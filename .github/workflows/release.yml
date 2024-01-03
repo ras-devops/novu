@@ -10,15 +10,23 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    if: github.event.pull_request.merged
-
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
     steps:
-      - name: Tag
-        uses: K-Phoen/semver-release-action@master
-        with:
-          release_branch: next
-          release_strategy: tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: '0'
+
+    - name: Bump version
+      uses: haya14busa/action-bumpr@v1
+      id: bump-version
+
+    - name: Show version
+      id: test
+      run: |
+        echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "next-version=${{ steps.bump-version.outputs.next_version }}"
+        echo "old-version=${{ steps.bump-version.outputs.current_version }}"
