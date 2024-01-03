@@ -46,6 +46,12 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: test
+        id: test
+        run: |
+          echo "cli_tag=$(git tag -l | tail -1)"
+          echo $cli_tag
+          env
       - name: Bump version
         uses: haya14busa/action-bumpr@v1
         if: "!startsWith(github.ref, 'refs/tags/')"
