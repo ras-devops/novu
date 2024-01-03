@@ -46,19 +46,18 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Get PR labels
-        id: pr-labels
-        uses: joerick/pr-labels-action@v1.0.8
-      - name: Get labels
-        id: get-labels
-        run: |
-          echo ${{ steps.pr-labels.outputs.labels }}
 #      - name: Get Tag via CLI
 #        id: get-tag-via-cli
 #        run: |
 #          echo "cli_tag=$(git tag -l | tail -1)"
 #          echo $cli_tag
 #          env
+      - name: Tag
+        uses: K-Phoen/semver-release-action@master
+        with:
+          release_branch: next
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #      - name: Bump version
 #        uses: haya14busa/action-bumpr@v1
 #        if: "!startsWith(github.ref, 'refs/tags/')"
