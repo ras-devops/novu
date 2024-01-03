@@ -52,12 +52,6 @@ jobs:
 #          echo "cli_tag=$(git tag -l | tail -1)"
 #          echo $cli_tag
 #          env
-      - name: Tag
-        uses: K-Phoen/semver-release-action@master
-        with:
-          release_branch: next
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #      - name: Bump version
 #        uses: haya14busa/action-bumpr@v1
 #        if: "!startsWith(github.ref, 'refs/tags/')"
