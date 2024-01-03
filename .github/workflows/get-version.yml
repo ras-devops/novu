@@ -46,15 +46,22 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Get Tag via CLI
+        id: get-tag-via-cli
+        run: |
+          echo "cli_tag=$(git tag -l | tail -1)"
+          echo $cli_tag
+          env
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - uses: jefflinse/pr-semver-bump@v1.6.0
         name: Bump and Tag Version
         id: semantic
         with:
           mode: bump
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          major-label: major
-          minor-label: minor
-          patch-label: patch
           require-release-notes: false
           release-notes-prefix: ''
           release-notes-suffix: ''
