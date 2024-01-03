@@ -55,8 +55,6 @@ jobs:
           major-label: major
           minor-label: minor
           patch-label: patch
-          noop-labels:
-            - documentation change
           require-release-notes: false
           release-notes-prefix: ''
           release-notes-suffix: ''
