@@ -48,6 +48,7 @@ jobs:
           fetch-depth: 0
       - name: Bump version
         uses: haya14busa/action-bumpr@v1
+        if: "!startsWith(github.ref, 'refs/tags/')"
         id: semantic
 #      - name: Get version
 #        uses: paulhatch/semantic-version@v5.3.0
