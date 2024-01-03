@@ -46,6 +46,22 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - uses: jefflinse/pr-semver-bump@v1.6.0
+        name: Bump and Tag Version
+        id: semantic
+        with:
+          mode: bump
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          major-label: major
+          minor-label: minor
+          patch-label: patch
+          noop-labels:
+            - documentation change
+          require-release-notes: false
+          release-notes-prefix: ''
+          release-notes-suffix: ''
+          with-v: true
+          base-branch: false
 #      - name: Get Tag via CLI
 #        id: get-tag-via-cli
 #        run: |
@@ -74,11 +90,11 @@ jobs:
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "version=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
-          echo "current_version=${{ steps.semantic.outputs.current_version }}" >> $GITHUB_OUTPUT
-          if [[ -z "${{ steps.semantic.outputs.next_version }}" ]]; then
+          echo "current_version=${{ steps.semantic.outputs.old-version }}" >> $GITHUB_OUTPUT
+          if [[ -z "${{ steps.semantic.outputs.version }}" ]]; then
             echo "tag=$(git tag -l | tail -1)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           else
-            echo "tag=${{ steps.semantic.outputs.next_version }}" >> $GITHUB_OUTPUT
+            echo "tag=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
           fi
 
 #          if [[ "${{ steps.semantic.outputs.version }}" == *-0 ]]; then
@@ -94,3 +110,4 @@ jobs:
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "version=${{ steps.sha_and_tag.outputs.tag }}"
+          echo "old-version=${{ steps.sha_and_tag.outputs.current_version }}"
