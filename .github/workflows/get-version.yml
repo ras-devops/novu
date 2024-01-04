@@ -43,14 +43,16 @@ jobs:
       deployments: write
       id-token: write
     steps:
-      - uses: ahmadnassri/action-workflow-run-wait@v1
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - name: Get Pull Request Number
+        id: pr
+        run: echo "::set-output name=pull_request_number::$(gh pr view --json number -q .number || echo "")"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Get LABELS
         id: get-labels
         env:
-          PR_NUMBER: ${{ github.event.number }}
+          PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
           GH_TOKEN: ${{ github.token }}
         run: |
           echo "cli_tag=$(git tag -l | tail -1)"
@@ -58,6 +60,11 @@ jobs:
           echo ${{ env.PR_NUMBER }}
           gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
           cat /tmp/label_list
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
 #      - name: Dump GitHub context
 #        env:
 #          GITHUB_CONTEXT: ${{ toJson(github) }}
