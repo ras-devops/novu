@@ -124,7 +124,7 @@ jobs:
               prerelease_label="alpha"
               build_number=$(echo $current_version | grep -Eo 'build:[0-9]+' | grep -Eo '[0-9]+' | tail -1)
               build_number=$((build_number + 1))
-              new_version="$current_version-$prerelease_label.$build_number"
+              new_version="$current_version"
               ;;
             *)
               echo "Invalid bump type"
@@ -140,6 +140,7 @@ jobs:
           echo "New Version: $new_version"
           echo "bump_type=$bump_type" >> $GITHUB_ENV
           echo "new_version=$new_version" >> $GITHUB_ENV
+
 
 
 #      - name: Get LABELS
