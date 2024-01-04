@@ -52,6 +52,7 @@ jobs:
       packages: write
       deployments: write
       id-token: write
+      pull-requests: read
     strategy:
       matrix:
 #        name: ['novu/api-ee', 'novu/api']
