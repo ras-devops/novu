@@ -2,6 +2,9 @@ name: Get version for applications
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 on:
+  workflow_run:
+    workflows: [ version-update ]
+    types: [ completed ]
   workflow_call:
     inputs:
       # The environment with the GH secrets environment.
@@ -43,13 +46,7 @@ jobs:
       deployments: write
       id-token: write
     steps:
-      - name: Wait for other checks to succeed
-        uses: lewagon/wait-on-check-action@v1.3.3
-        with:
-          ref: ${{ github.ref }}
-          running-workflow-name: 'Bump version'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 1
+      - uses: ahmadnassri/action-workflow-run-wait@v1
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
