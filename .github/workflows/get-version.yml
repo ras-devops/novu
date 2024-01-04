@@ -105,37 +105,16 @@ jobs:
           prerelease_label=$(echo $labels | grep -Eo 'pre:(alpha|beta|stable)' | head -1)
           build_number=$(echo $current_version | grep -Eo 'build:[0-9]+' | grep -Eo '[0-9]+' | tail -1)
 
-          case $bump_type in
-            "major")
-              # Bump Major Version
-              new_version=$(echo $current_version | awk -F. '{print $1 + 1 ".0.0"}')
-              ;;
-            "minor")
-              # Bump Minor Version
-              new_version=$(echo $current_version | awk -F. '{print $1 "." $2 + 1 ".0"}')
-              ;;
-            "patch")
-              # Bump Patch Version
-              new_version=$(echo $current_version | awk -F. '{print $1 "." $2 "." $3 + 1}')
-              ;;
-            "build")
-              # Bump Build Number
-              if [ -z "$prerelease_label" ]; then
-                prerelease_label="alpha"
-              fi
-              build_number=$((build_number + 1))
-              new_version="${current_version%-*}-$prerelease_label.$build_number"
-              ;;
-            *)
-              echo "Invalid bump type"
-              exit 1
-              ;;
-          esac
-
-          # If there are no prerelease labels, increment build number
-          if [ -z "$prerelease_label" ]; then
+          # If prerelease labels are present, bump the build number
+          if [ -n "$prerelease_label" ]; then
             build_number=$((build_number + 1))
+          fi
+
+          # If there are prerelease labels, include them in the new version
+          if [ -n "$prerelease_label" ]; then
             new_version="${current_version%-*}-$prerelease_label.$build_number"
+          else
+            new_version="${current_version%-*}.$build_number"
           fi
 
           echo "Bumping $bump_type Version"
