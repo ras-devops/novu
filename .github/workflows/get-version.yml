@@ -69,7 +69,6 @@ jobs:
         id: get-latest-tag
         run: |
           echo "latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
-          echo "Latest Tag: $latest_tag"
 
       - name: Get LABELS
         id: get-labels
@@ -104,7 +103,7 @@ jobs:
 
           # Determine prerelease type and build number
           prerelease_label=$(echo $labels | grep -Eo 'pre:(alpha|beta|stable)' | head -1)
-          build_number=$(echo $current_version | grep -Eo 'build:[0-9]+' | grep -Eo '[0-9]+' | head -1)
+          build_number=$(echo $current_version | grep -Eo 'build:[0-9]+' | grep -Eo '[0-9]+' | tail -1)
 
           case $bump_type in
             "major")
@@ -121,9 +120,11 @@ jobs:
               ;;
             "build")
               # Bump Build Number
-              prerelease_label="alpha"
+              if [ -z "$prerelease_label" ]; then
+                prerelease_label="alpha"
+              fi
               build_number=$((build_number + 1))
-              new_version="$current_version"
+              new_version="${current_version%-*}-$prerelease_label.$build_number"
               ;;
             *)
               echo "Invalid bump type"
@@ -131,14 +132,11 @@ jobs:
               ;;
           esac
 
-          if [ -n "$prerelease_label" ]; then
-            new_version="$new_version-$prerelease_label.$build_number"
-          fi
-
           echo "Bumping $bump_type Version"
           echo "New Version: $new_version"
           echo "bump_type=$bump_type" >> $GITHUB_ENV
           echo "new_version=$new_version" >> $GITHUB_ENV
+
 
 
 #      - name: Get LABELS
