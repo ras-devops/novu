@@ -47,24 +47,34 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get Pull Request Number
-        id: pr
-        run: |
-          echo "pull_request_number=$(gh pr view --json number -q .number || echo "")" >> $GITHUB_OUTPUT
+      - run: |
+          labels="$(gh api repos/$OWNER/$REPO_NAME/pulls/$PULL_REQUEST_NUMBER --jq '.labels.[].name')"
+          echo "$labels"
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
 
-      - name: Get LABELS
-        id: get-labels
-        env:
-          PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          echo "cli_tag=$(git tag -l | tail -1)"
-          echo $cli_tag
-          echo ${{ env.PR_NUMBER }}
-          gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
-          cat /tmp/label_list
+#      - name: Get Pull Request Number
+#        id: pr
+#        run: |
+#          echo "pull_request_number=$(gh pr view --json number -q .number || echo "")" >> $GITHUB_OUTPUT
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#
+#      - name: Get LABELS
+#        id: get-labels
+#        env:
+#          PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
+#          GH_TOKEN: ${{ github.token }}
+#        run: |
+#          echo "cli_tag=$(git tag -l | tail -1)"
+#          echo $cli_tag
+#          echo ${{ env.PR_NUMBER }}
+#          gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
+#          cat /tmp/label_list
 
 #      - name: Dump GitHub context
 #        env:
