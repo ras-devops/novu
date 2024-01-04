@@ -113,18 +113,24 @@ jobs:
 
           # If prerelease labels are present, bump the build number only for the highest priority prerelease type
           if [ -n "$prerelease_label" ]; then
+            new_prerelease_label="$prerelease_label"
+
             if [[ $labels == *"pre:beta"* ]]; then
-              prerelease_label="beta"
+              new_prerelease_label="beta"
             elif [[ $labels == *"pre:stable"* ]]; then
-              prerelease_label="stable"
+              new_prerelease_label="stable"
             fi
 
-            build_number=$((build_number + 1))
+            if [ "$new_prerelease_label" != "$prerelease_label" ]; then
+              build_number=0
+            else
+              build_number=$((build_number + 1))
+            fi
           fi
 
           # If there are prerelease labels, include them in the new version
-          if [ -n "$prerelease_label" ]; then
-            new_version="${current_version%-*}-$prerelease_label.$build_number"
+          if [ -n "$new_prerelease_label" ]; then
+            new_version="${current_version%-*}-$new_prerelease_label.$build_number"
           else
             new_version="${current_version%-*}.$build_number"
 
@@ -139,6 +145,7 @@ jobs:
           echo "New Version: $new_version"
           echo "bump_type=$bump_type" >> $GITHUB_ENV
           echo "new_version=$new_version" >> $GITHUB_ENV
+
 
 #      - name: Get LABELS
 #        id: get-labels
