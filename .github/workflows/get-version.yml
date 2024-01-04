@@ -44,10 +44,10 @@ jobs:
       id-token: write
     steps:
       - name: Wait for other checks to succeed
-        uses: lewagon/wait-on-check-action@v1.3.1
+        uses: lewagon/wait-on-check-action@v1.3.3
         with:
           ref: ${{ github.ref }}
-          running-workflow-name: 'Version update'
+          running-workflow-name: 'Bump version'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 1
       - uses: actions/checkout@v3
