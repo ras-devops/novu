@@ -90,7 +90,7 @@ jobs:
           labels=$(cat /tmp/label_list)
           current_version="${{ steps.get-latest-tag.outputs.latest_tag }}"
 
-          # Determine the bump type (major, minor, or patch)
+          # Determine the bump type (major, minor, patch, or build)
           if [[ $labels == *"bump:major"* ]]; then
             bump_type="major"
           elif [[ $labels == *"bump:minor"* ]]; then
@@ -98,9 +98,13 @@ jobs:
           elif [[ $labels == *"bump:patch"* ]]; then
             bump_type="patch"
           else
-            echo "No version bump labels found."
-            exit 1
+            echo "No version bump labels found. Bumping build number."
+            bump_type="build"
           fi
+
+          # Determine prerelease type and build number
+          prerelease_label=$(echo $labels | grep -Eo 'pre:(alpha|beta|stable)' | head -1)
+          build_number=$(echo $labels | grep -Eo 'build:[0-9]+' | grep -Eo '[0-9]+' | head -1)
 
           case $bump_type in
             "major")
@@ -115,17 +119,27 @@ jobs:
               # Bump Patch Version
               new_version=$(echo $current_version | awk -F. '{print $1 "." $2 "." $3 + 1}')
               ;;
+            "build")
+              # Bump Build Number
+              prerelease_label="alpha"
+              build_number=$(echo $current_version | grep -Eo 'build:[0-9]+' | grep -Eo '[0-9]+' | tail -1)
+              build_number=$((build_number + 1))
+              new_version="$current_version-$prerelease_label.$build_number"
+              ;;
             *)
               echo "Invalid bump type"
               exit 1
               ;;
           esac
 
+          if [ -n "$prerelease_label" ]; then
+            new_version="$new_version-$prerelease_label.$build_number"
+          fi
+
           echo "Bumping $bump_type Version"
           echo "New Version: $new_version"
-          echo "::set-output name=bump_type::$bump_type"
-          echo "::set-output name=new_version::$new_version"
-
+          echo "bump_type=$bump_type" >> $GITHUB_ENV
+          echo "new_version=$new_version" >> $GITHUB_ENV
 
 
 #      - name: Get LABELS
@@ -179,18 +193,18 @@ jobs:
 #          bump_each_commit: true
 #          bump_each_commit_patch_pattern: "(PATH)"
 
-      - name: Set TAGS
-        id: sha_and_tag
-        run: |
-          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "version=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
-          echo "current_version=${{ steps.semantic.outputs.old-version }}" >> $GITHUB_OUTPUT
-          if [[ -z "${{ steps.semantic.outputs.version }}" ]]; then
-            echo "tag=$(git tag -l | tail -1)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          else
-            echo "tag=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
-          fi
+#      - name: Set TAGS
+#        id: sha_and_tag
+#        run: |
+#          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+#          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+#          echo "version=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
+#          echo "current_version=${{ steps.semantic.outputs.old-version }}" >> $GITHUB_OUTPUT
+#          if [[ -z "${{ steps.semantic.outputs.version }}" ]]; then
+#            echo "tag=$(git tag -l | tail -1)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+#          else
+#            echo "tag=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
+#          fi
 
 #          if [[ "${{ steps.semantic.outputs.version }}" == *-0 ]]; then
 #
@@ -199,10 +213,10 @@ jobs:
 #            echo "tag=${{ steps.semantic.outputs.version_tag }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 #          fi
 
-      - name: VARS
-        id: test
-        run: |
-          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "version=${{ steps.sha_and_tag.outputs.tag }}"
-          echo "old-version=${{ steps.sha_and_tag.outputs.current_version }}"
+#      - name: VARS
+#        id: test
+#        run: |
+#          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+#          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+#          echo "version=${{ steps.sha_and_tag.outputs.tag }}"
+#          echo "old-version=${{ steps.sha_and_tag.outputs.current_version }}"

@@ -107,14 +107,14 @@ jobs:
 #          echo "git_version_tag=${{ steps.semantic-api.outputs.version_tag }}" >> $GITHUB_OUTPUT
 ###############################################################
 
-      - uses: ./.github/actions/docker/build-api
-        id: docker_build
-        with:
-          tag: ${{ needs.get_version.outputs.env_tag }}
-          push: 'true'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          docker_name: ${{ matrix.name }}
-          bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
+#      - uses: ./.github/actions/docker/build-api
+#        id: docker_build
+#        with:
+#          tag: ${{ needs.get_version.outputs.env_tag }}
+#          push: 'true'
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          docker_name: ${{ matrix.name }}
+#          bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
 
 #      - name: Checkout cloud infra
 #        if: ${{ contains (matrix.name,'-ee') }}
