@@ -65,13 +65,11 @@ jobs:
           echo "pr_number=${{ fromJson(steps.get_pr_data.outputs.result).number }}" >> $GITHUB_OUTPUT
           echo "pr_title=${{ fromJson(steps.get_pr_data.outputs.result).title }}" >> $GITHUB_OUTPUT
 
-      - name: Check Existing Git Tag
-        id: check-existing-tag
+      - name: Get latest git tag
+        id: get-latest-tag
         run: |
-          if git rev-parse "v${{ env.cli_tag }}" >/dev/null 2>&1; then
-            echo "Tag v${{ env.cli_tag }} already exists. Skipping version bump."
-            echo "::set-output name=bump::none"
-          fi
+          echo "latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
+          echo "Latest Tag: $latest_tag"
 
       - name: Get LABELS
         id: get-labels
@@ -90,16 +88,45 @@ jobs:
         if: ${{ steps.check-existing-tag.outputs.bump != 'none' }}
         run: |
           labels=$(cat /tmp/label_list)
+          current_version="${{ steps.get-latest-tag.outputs.latest_tag }}"
 
+          # Determine the bump type (major, minor, or patch)
           if [[ $labels == *"bump:major"* ]]; then
-            echo "Bumping Major Version"
+            bump_type="major"
           elif [[ $labels == *"bump:minor"* ]]; then
-            echo "Bumping Minor Version"
+            bump_type="minor"
           elif [[ $labels == *"bump:patch"* ]]; then
-            echo "Bumping Patch Version"
+            bump_type="patch"
           else
             echo "No version bump labels found."
+            exit 1
           fi
+
+          case $bump_type in
+            "major")
+              # Bump Major Version
+              new_version=$(echo $current_version | awk -F. '{print $1 + 1 ".0.0"}')
+              ;;
+            "minor")
+              # Bump Minor Version
+              new_version=$(echo $current_version | awk -F. '{print $1 "." $2 + 1 ".0"}')
+              ;;
+            "patch")
+              # Bump Patch Version
+              new_version=$(echo $current_version | awk -F. '{print $1 "." $2 "." $3 + 1}')
+              ;;
+            *)
+              echo "Invalid bump type"
+              exit 1
+              ;;
+          esac
+
+          echo "Bumping $bump_type Version"
+          echo "New Version: $new_version"
+          echo "::set-output name=bump_type::$bump_type"
+          echo "::set-output name=new_version::$new_version"
+
+
 
 #      - name: Get LABELS
 #        id: get-labels
