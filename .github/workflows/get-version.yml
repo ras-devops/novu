@@ -139,9 +139,7 @@ jobs:
           echo "Bumping $bump_type Version"
           echo "New Version: $new_version"
           echo "bump_type=$bump_type" >> $GITHUB_ENV
-          echo "new_version=$new_version" >> $GITHUB_ENV
-
-
+          echo "new_version=v$new_version" >> $GITHUB_ENV
 
 #      - name: Get LABELS
 #        id: get-labels
