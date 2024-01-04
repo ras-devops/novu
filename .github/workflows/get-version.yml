@@ -49,16 +49,19 @@ jobs:
           ref: ${{ github.ref }}
           running-workflow-name: 'Version update'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
+          wait-interval: 1
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-#      - name: Get Tag via CLI
-#        id: get-tag-via-cli
-#        run: |
-#          echo "cli_tag=$(git tag -l | tail -1)"
-#          echo $cli_tag
-#          env
+      - name: Get LABELS
+        id: get-labels
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          echo "cli_tag=$(git tag -l | tail -1)"
+          echo $cli_tag
+          gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/issues/${{ github.event.pull_request.number }}/labels | jq '[.[].name]' > /tmp/label_list
+          cat /tmp/label_list
 #      - name: Dump GitHub context
 #        env:
 #          GITHUB_CONTEXT: ${{ toJson(github) }}
