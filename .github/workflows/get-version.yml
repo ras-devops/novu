@@ -117,6 +117,11 @@ jobs:
             new_version="${current_version%-*}.$build_number"
           fi
 
+          # If there is no prerelease label, but the current version has the format "v0.25.17-alpha.1"
+          if [ -z "$prerelease_label" ] && [[ $current_version =~ -alpha.[0-9]+$ ]]; then
+            new_version="${current_version%-*}-alpha.$((build_number - 1))"
+          fi
+
           echo "Bumping $bump_type Version"
           echo "Previous Version: $current_version"
           echo "New Version: $new_version"
