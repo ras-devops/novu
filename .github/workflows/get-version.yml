@@ -104,7 +104,7 @@ jobs:
 
           # Determine prerelease type and build number
           prerelease_label=$(echo $labels | grep -Eo 'pre:(alpha|beta|stable)' | head -1)
-          build_number=$(echo $labels | grep -Eo 'build:[0-9]+' | grep -Eo '[0-9]+' | head -1)
+          build_number=$(echo $current_version | grep -Eo 'build:[0-9]+' | grep -Eo '[0-9]+' | head -1)
 
           case $bump_type in
             "major")
@@ -122,7 +122,6 @@ jobs:
             "build")
               # Bump Build Number
               prerelease_label="alpha"
-              build_number=$(echo $current_version | grep -Eo 'build:[0-9]+' | grep -Eo '[0-9]+' | tail -1)
               build_number=$((build_number + 1))
               new_version="$current_version"
               ;;
@@ -139,7 +138,8 @@ jobs:
           echo "Bumping $bump_type Version"
           echo "New Version: $new_version"
           echo "bump_type=$bump_type" >> $GITHUB_ENV
-          echo "new_version=v$new_version" >> $GITHUB_ENV
+          echo "new_version=$new_version" >> $GITHUB_ENV
+
 
 #      - name: Get LABELS
 #        id: get-labels
