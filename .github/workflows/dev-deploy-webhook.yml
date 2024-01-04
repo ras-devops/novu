@@ -31,6 +31,7 @@ jobs:
       packages: write
       deployments: write
       id-token: write
+      pull-requests: read
     with:
       environment: Development
       environment_short: dev
