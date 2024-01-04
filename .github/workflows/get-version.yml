@@ -49,13 +49,13 @@ jobs:
         id: get_pr_data
         with:
           script: |
-              return (
-                await github.rest.repos.listPullRequestsAssociatedWithCommit({
-                  commit_sha: context.sha,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                })
-              ).data[0];
+            return (
+              await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                commit_sha: context.sha,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              })
+            ).data[0];
 
       - name: Pull Request data
         id: show-pr-data
@@ -64,6 +64,14 @@ jobs:
           echo "${{ fromJson(steps.get_pr_data.outputs.result).title }}"
           echo "pr_number=${{ fromJson(steps.get_pr_data.outputs.result).number }}" >> $GITHUB_OUTPUT
           echo "pr_title=${{ fromJson(steps.get_pr_data.outputs.result).title }}" >> $GITHUB_OUTPUT
+
+      - name: Check Existing Git Tag
+        id: check-existing-tag
+        run: |
+          if git rev-parse "v${{ env.cli_tag }}" >/dev/null 2>&1; then
+            echo "Tag v${{ env.cli_tag }} already exists. Skipping version bump."
+            echo "::set-output name=bump::none"
+          fi
 
       - name: Get LABELS
         id: get-labels
@@ -76,6 +84,22 @@ jobs:
           echo ${{ env.PR_NUMBER }}
           gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
           cat /tmp/label_list
+
+      - name: Determine Version Bump
+        id: determine-bump
+        if: ${{ steps.check-existing-tag.outputs.bump != 'none' }}
+        run: |
+          labels=$(cat /tmp/label_list)
+
+          if [[ $labels == *"bump:major"* ]]; then
+            echo "Bumping Major Version"
+          elif [[ $labels == *"bump:minor"* ]]; then
+            echo "Bumping Minor Version"
+          elif [[ $labels == *"bump:patch"* ]]; then
+            echo "Bumping Patch Version"
+          else
+            echo "No version bump labels found."
+          fi
 
 #      - name: Get LABELS
 #        id: get-labels

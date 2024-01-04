@@ -5,8 +5,7 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - next
-      - main
+      - skipppp
 
 jobs:
   build:
