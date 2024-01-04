@@ -105,8 +105,20 @@ jobs:
           prerelease_label=$(echo $current_version | grep -Eo '[-.]alpha|beta|stable[0-9]+' | grep -Eo 'alpha|beta|stable[0-9]+' | tail -1)
           build_number=$(echo $current_version | sed -n 's/.*-'"$prerelease_label"'\.\([0-9]\{1,\}\)/\1/p')
 
-          # If prerelease labels are present, bump the build number
+          # If there are no labels and no prerelease part, create prerelease alpha with build number 0
+          if [ -z "$labels" ] && [ -z "$prerelease_label" ]; then
+            prerelease_label="alpha"
+            build_number=0
+          fi
+
+          # If prerelease labels are present, bump the build number only for the highest priority prerelease type
           if [ -n "$prerelease_label" ]; then
+            if [[ $labels == *"pre:beta"* ]]; then
+              prerelease_label="beta"
+            elif [[ $labels == *"pre:stable"* ]]; then
+              prerelease_label="stable"
+            fi
+
             build_number=$((build_number + 1))
           fi
 
