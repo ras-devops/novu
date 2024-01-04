@@ -55,7 +55,8 @@ jobs:
         run: |
           echo "cli_tag=$(git tag -l | tail -1)"
           echo $cli_tag
-          gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/issues/${{ github.event.pull_request.number }}/labels | jq '[.[].name]' > /tmp/label_list
+          echo ${{ env.PR_NUMBER }}
+          gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
           cat /tmp/label_list
 #      - name: Dump GitHub context
 #        env:
