@@ -85,7 +85,7 @@ jobs:
         if: ${{ steps.check-existing-tag.outputs.bump != 'none' }}
         run: |
           labels=$(cat /tmp/label_list)
-          current_version="$1"
+          current_version="${{ steps.get-latest-tag.outputs.latest_tag }}"
 
           # Determine the bump type (major, minor, patch, or build)
           if [[ $labels == *"bump:major"* ]]; then
