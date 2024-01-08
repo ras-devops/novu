@@ -82,9 +82,9 @@ jobs:
           cat /tmp/label_list
           echo "list_labels=$(cat /tmp/label_list)" >> $GITHUB_OUTPUT
 
-      - name: Determine Version Bump
+      - name: Semantic Custom Version Bumping
+        uses: ras-devops/determine-version-bump@v1.0.1
         id: determine_bump
-        uses: determine-version-bump@v1.0.1
         with:
           current_version: ${{ steps.previoustag.outputs.tag }}
           list_labels: ${{ steps.get-labels.outputs.list_labels }}
