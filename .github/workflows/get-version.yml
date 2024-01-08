@@ -65,17 +65,9 @@ jobs:
           echo "pr_number=${{ fromJson(steps.get_pr_data.outputs.result).number }}" >> $GITHUB_OUTPUT
           echo "pr_title=${{ fromJson(steps.get_pr_data.outputs.result).title }}" >> $GITHUB_OUTPUT
 
-      - name: Get latest git tag
-        id: get-latest-tag
-        run: |
-          echo "latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
-
       - name: 'Get Previous tag'
         id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-
-      - uses: actions-ecosystem/action-get-latest-tag@v1
-        id: get-latest-tag-2
+        uses: actions-ecosystem/action-get-latest-tag@v1
 
       - name: Get LABELS
         id: get-labels
@@ -83,10 +75,8 @@ jobs:
           PR_NUMBER: ${{ steps.show-pr-data.outputs.pr_number }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          echo "${{ steps.get-latest-tag.outputs.latest_tag }}"
           echo ${{ env.PR_NUMBER }}
           echo TAG ${{ steps.previoustag.outputs.tag }}
-          echo TAG2 ${{ steps.get-latest-tag-2.outputs.tag }}
           gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
           cat /tmp/label_list
 
@@ -94,7 +84,7 @@ jobs:
         id: determine-bump
         run: |
           labels=$(cat /tmp/label_list)
-          current_version="${{ steps.get-latest-tag-2.outputs.tag }}"
+          current_version="${{ steps.previoustag.outputs.tag }}"
 
           # Determine the bump type (major, minor, patch, or build)
           if [[ $labels == *"bump:major"* ]]; then
