@@ -14,15 +14,15 @@ on:
       env_tag:
         description: 'The new version of the application'
         value: ${{ jobs.get_version.outputs.new_version }}
+      previous_tag:
+        description: 'The current version of the application'
+        value: ${{ jobs.get_version.outputs.current_version }}
       sha:
         description: 'The current sha of the code'
         value: ${{ jobs.get_version.outputs.sha }}
       sha_short:
         description: 'The current sha short of the code'
         value: ${{ jobs.get_version.outputs.sha_short }}
-      version:
-        description: 'The current version of the application'
-        value: ${{ jobs.get_version.outputs.current_version }}
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -177,8 +177,7 @@ jobs:
           echo "Current Version: $current_version"
           echo "Labels attached to the Pull Request: $labels"
           echo "New Version: $new_version"
-          echo "bump_type=$bump_type" >> $GITHUB_ENV
-          echo "new_version=$new_version" >> $GITHUB_ENV
-          echo "current_version=$current_version" >> $GITHUB_ENV
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+          echo "current_version=$current_version" >> $GITHUB_OUTPUT
