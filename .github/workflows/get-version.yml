@@ -65,9 +65,8 @@ jobs:
           echo "pr_number=${{ fromJson(steps.get_pr_data.outputs.result).number }}" >> $GITHUB_OUTPUT
           echo "pr_title=${{ fromJson(steps.get_pr_data.outputs.result).title }}" >> $GITHUB_OUTPUT
 
-      - name: 'Get Previous tag'
+      - uses: actions-ecosystem/action-get-latest-tag@v1
         id: previoustag
-        uses: actions-ecosystem/action-get-latest-tag@v1
 
       - name: Get LABELS
         id: get-labels
@@ -179,81 +178,3 @@ jobs:
           echo "bump_type=$bump_type" >> $GITHUB_ENV
           echo "new_version=$new_version" >> $GITHUB_ENV
 
-#      - name: Get LABELS
-#        id: get-labels
-#        env:
-#          PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
-#          GH_TOKEN: ${{ github.token }}
-#        run: |
-#          echo "cli_tag=$(git tag -l | tail -1)"
-#          echo $cli_tag
-#          echo ${{ env.PR_NUMBER }}
-#          gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
-#          cat /tmp/label_list
-
-#      - name: Dump GitHub context
-#        env:
-#          GITHUB_CONTEXT: ${{ toJson(github) }}
-#        run: echo "$GITHUB_CONTEXT"
-#
-#      - uses: jefflinse/pr-semver-bump@v1.6.0
-#        name: Bump and Tag Version
-#        id: semantic
-#        with:
-#          mode: bump
-#          repo-token: ${{ secrets.GITHUB_TOKEN }}
-#          require-release-notes: false
-#          release-notes-prefix: ''
-#          release-notes-suffix: ''
-#          with-v: true
-#          base-branch: false
-#
-#      - name: Get Tag via CLI
-#        id: get-tag-via-cli
-#        run: |
-#          echo "cli_tag=$(git tag -l | tail -1)"
-#          echo $cli_tag
-#          env
-#      - name: Bump version
-#        uses: haya14busa/action-bumpr@v1
-#        if: "!startsWith(github.ref, 'refs/tags/')"
-#        id: semantic
-#      - name: Get version
-#        uses: paulhatch/semantic-version@v5.3.0
-#        id: semantic
-#        with:
-#          tag_prefix: "v"
-#          version_format: "${major}.${minor}.${patch}-${increment}"
-#          major_pattern: "(MAJOR)"
-#          minor_pattern: "(MINOR)"
-#          debug: true
-#          bump_each_commit: true
-#          bump_each_commit_patch_pattern: "(PATH)"
-
-#      - name: Set TAGS
-#        id: sha_and_tag
-#        run: |
-#          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-#          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-#          echo "version=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
-#          echo "current_version=${{ steps.semantic.outputs.old-version }}" >> $GITHUB_OUTPUT
-#          if [[ -z "${{ steps.semantic.outputs.version }}" ]]; then
-#            echo "tag=$(git tag -l | tail -1)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-#          else
-#            echo "tag=${{ steps.semantic.outputs.version }}" >> $GITHUB_OUTPUT
-#          fi
-
-#          if [[ "${{ steps.semantic.outputs.version }}" == *-0 ]]; then
-#
-#            echo "tag=${{ steps.semantic.outputs.version_tag }}" >> $GITHUB_OUTPUT
-#          else
-#            echo "tag=${{ steps.semantic.outputs.version_tag }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-#          fi
-
-#      - name: VARS
-#        id: test
-#        run: |
-#          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-#          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-#          echo "version=${{ steps.sha_and_tag.outputs.tag }}"
-#          echo "old-version=${{ steps.sha_and_tag.outputs.current_version }}"

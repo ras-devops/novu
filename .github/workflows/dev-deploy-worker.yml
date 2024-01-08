@@ -81,14 +81,14 @@ jobs:
           echo "TEST2 = $TEST2"
           echo "TEST3 = $TEST3"
 
-#      - uses: ./.github/actions/docker/build-worker
-#        id: docker_build
-#        with:
-#          tag: ${{ needs.get_version.outputs.env_tag }}
-#          push: 'true'
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          docker_name: ${{ matrix.name }}
-#          bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
+      - uses: ./.github/actions/docker/build-worker
+        id: docker_build
+        with:
+          tag: ${{ needs.get_version.outputs.env_tag }}
+          push: 'true'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          docker_name: ${{ matrix.name }}
+          bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
 
 #  # Temporary for the migration phase
 #  deploy_general_worker:
