@@ -86,7 +86,19 @@ jobs:
         run: |
           labels=$(cat /tmp/label_list)
           current_version="${{ steps.previoustag.outputs.tag }}"
+          validate_version() {
+            local version="$1"
+            regex="^v?([0-9]+\.){2}[0-9]+(-[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*)?(\+[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*)?$"
 
+            if [[ $version =~ $regex ]]; then
+              echo "Valid version: $version"
+            else
+              echo "Invalid version: $version"
+              exit 1
+            fi
+          }
+
+          validate_version "$current_version"
           # Determine the bump type (major, minor, patch, or build)
           if [[ $labels == *"bump:major"* ]]; then
             bump_type="major"
@@ -172,7 +184,7 @@ jobs:
             exit 1
             ;;
           esac
-
+          validate_version "$new_version"
           echo "Bumping $bump_type Version"
           echo "Current Version: $current_version"
           echo "Labels attached to the Pull Request: $labels"

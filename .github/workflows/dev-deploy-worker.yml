@@ -33,7 +33,7 @@ jobs:
   get_version:
     uses: ./.github/workflows/get-version.yml
     permissions:
-      contents: read
+      contents: write
       packages: write
       deployments: write
       id-token: write
@@ -51,7 +51,7 @@ jobs:
     timeout-minutes: 80
     environment: Development
     permissions:
-      contents: read
+      contents: write
       packages: write
       deployments: write
       id-token: write
@@ -96,6 +96,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           custom_tag: ${{ needs.get_version.outputs.env_tag }}
+          tag_prefix: ''
 
 #  # Temporary for the migration phase
 #  deploy_general_worker:
