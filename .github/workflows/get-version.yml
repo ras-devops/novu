@@ -76,8 +76,7 @@ jobs:
           PR_NUMBER: ${{ steps.show-pr-data.outputs.pr_number }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          echo ${{ env.PR_NUMBER }}
-          echo TAG ${{ steps.previoustag.outputs.tag }}
+          echo "The Pull request Number for labels getting is ${{ env.PR_NUMBER }}"
           gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
 
       - name: Semantic Custom Version Bumping
