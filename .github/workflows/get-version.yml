@@ -42,6 +42,8 @@ jobs:
       pull-requests: read
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - uses: actions/github-script@v7
         id: get_pr_data
@@ -90,10 +92,9 @@ jobs:
 
       - name: Determine Version Bump
         id: determine-bump
-        if: ${{ steps.check-existing-tag.outputs.bump != 'none' }}
         run: |
           labels=$(cat /tmp/label_list)
-          current_version="${{ steps.get-latest-tag.outputs.latest_tag }}"
+          current_version="${{ steps.get-latest-tag-2.outputs.tag }}"
 
           # Determine the bump type (major, minor, patch, or build)
           if [[ $labels == *"bump:major"* ]]; then
