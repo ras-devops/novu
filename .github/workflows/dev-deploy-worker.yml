@@ -90,6 +90,13 @@ jobs:
           docker_name: ${{ matrix.name }}
           bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
 
+      - name: Push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ needs.get_version.outputs.env_tag }}
+
 #  # Temporary for the migration phase
 #  deploy_general_worker:
 #    needs: build_dev_worker
