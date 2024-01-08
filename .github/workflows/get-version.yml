@@ -68,15 +68,23 @@ jobs:
         run: |
           echo "latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
 
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag-2
+
       - name: Get LABELS
         id: get-labels
         env:
           PR_NUMBER: ${{ steps.show-pr-data.outputs.pr_number }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          echo "cli_tag=$(git tag -l | tail -1)"
-          echo $cli_tag
+          echo "${{ steps.get-latest-tag.outputs.latest_tag }}"
           echo ${{ env.PR_NUMBER }}
+          echo TAG ${{ steps.previoustag.outputs.tag }}
+          echo TAG2 ${{ steps.get-latest-tag-2.outputs.tag }}
           gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
           cat /tmp/label_list
 
