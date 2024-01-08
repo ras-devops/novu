@@ -42,8 +42,6 @@ jobs:
       pull-requests: read
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - uses: actions/github-script@v7
         id: get_pr_data
@@ -87,7 +85,7 @@ jobs:
         if: ${{ steps.check-existing-tag.outputs.bump != 'none' }}
         run: |
           labels=$(cat /tmp/label_list)
-          current_version="${{ steps.get-latest-tag.outputs.latest_tag }}"
+          current_version="$1"
 
           # Determine the bump type (major, minor, patch, or build)
           if [[ $labels == *"bump:major"* ]]; then
@@ -102,50 +100,85 @@ jobs:
           fi
 
           # Determine prerelease type and build number
-          prerelease_label=$(echo $current_version | grep -Eo '[-.]alpha|beta|stable[0-9]+' | grep -Eo 'alpha|beta|stable[0-9]+' | tail -1)
+          prerelease_label=$(echo $current_version | awk -F- '{print $2}' | awk -F. '{print $1}')
           build_number=$(echo $current_version | sed -n 's/.*-'"$prerelease_label"'\.\([0-9]\{1,\}\)/\1/p')
+
+          echo "prerelease_label: $prerelease_label"
+          echo "build_number: $build_number"
 
           # If there are no labels and no prerelease part, create prerelease alpha with build number 0
           if [ -z "$labels" ] && [ -z "$prerelease_label" ]; then
-            prerelease_label="alpha"
-            build_number=0
+            new_prerelease_label="alpha"
+            new_build_number=0
+          elif [ -z "$prerelease_label" ]; then
+            # If prerelease suffix doesn't exist, create default prerelease alpha with build number 0
+            new_prerelease_label="alpha"
+            new_build_number=0
+          fi
+
+          # If prerelease labels are present, prioritize them
+          if [ -n "$labels" ]; then
+            if [[ $labels == *"pre:demo"* ]]; then
+              new_prerelease_label="demo"
+            elif [[ $labels == *"pre:beta"* ]] && [[ $prerelease_label == "demo" ]]; then
+              new_prerelease_label="demo"
+            elif [[ $labels == *"pre:alpha"* ]] && [[ $prerelease_label == "demo" ]]; then
+              new_prerelease_label="demo"
+            elif [[ $labels == *"pre:alpha"* ]] && [[ $prerelease_label == "beta" ]]; then
+              new_prerelease_label="beta"
+            elif [[ $labels == *"pre:beta"* ]] ; then
+              new_prerelease_label="beta"
+            fi
           fi
 
           # If prerelease labels are present, bump the build number only for the highest priority prerelease type
-          if [ -n "$prerelease_label" ]; then
-            new_prerelease_label="$prerelease_label"
+          if [ -n "$new_prerelease_label" ] && ([ -z "$prerelease_label" ] || [ "$new_prerelease_label" != "$prerelease_label" ]); then
+            prerelease_label="$new_prerelease_label"
+            new_build_number=0
+          elif [ -n "$new_prerelease_label" ]; then
+            build_number=$((build_number + 1))
+          fi
 
-            if [[ $labels == *"pre:beta"* ]]; then
-              new_prerelease_label="beta"
-            elif [[ $labels == *"pre:stable"* ]]; then
-              new_prerelease_label="stable"
-            fi
-
-            if [ "$new_prerelease_label" != "$prerelease_label" ]; then
-              build_number=0
+          # Bump major, minor, or patch version based on the determined bump type
+          case $bump_type in
+          "major")
+            new_version=$(echo $current_version | awk -F. '{print $1 + 1 ".0.0"}')
+            ;;
+          "minor")
+            new_version=$(echo $current_version | awk -F. '{print $1 "." $2 + 1 ".0"}')
+            ;;
+          "patch")
+            new_version=$(echo $current_version | awk -F. '{print $1 "." $2 "." $3 + 1}')
+            ;;
+          "build")
+            # If there are prerelease labels, include them in the new version
+            if [ -n "$prerelease_label" ] && [ -n "$new_build_number" ] ; then
+              new_version="${current_version%-*}-$prerelease_label.$new_build_number"
+            elif [ -n "$prerelease_label" ] && [ "$new_prerelease_label" == "$prerelease_label" ]; then
+              new_version="${current_version%-*}-$prerelease_label.$build_number"
+            elif [ -n "$prerelease_label" ] && [ -z "$new_prerelease_label" ] ; then
+              new_version="${current_version%-*}-$prerelease_label.$((build_number + 1))"
             else
-              build_number=$((build_number + 1))
-            fi
-          fi
+              new_version="${current_version%-*}.$build_number"
 
-          # If there are prerelease labels, include them in the new version
-          if [ -n "$new_prerelease_label" ]; then
-            new_version="${current_version%-*}-$new_prerelease_label.$build_number"
-          else
-            new_version="${current_version%-*}.$build_number"
-
-            # If there is no prerelease label, but the current version has the format "v0.25.17-alpha.1"
-            if [[ $current_version =~ -alpha.[0-9]+$ ]]; then
-              new_version="${current_version%-*}-alpha.$((build_number - 1))"
+              # If there is no prerelease label, but the current version has the format "v0.25.17-alpha.1"
+              if [[ $current_version =~ -alpha.[0-9]+$ ]]; then
+                new_version="${current_version%-*}-alpha.$((build_number - 1))"
+              fi
             fi
-          fi
+            ;;
+          *)
+            echo "Invalid bump type"
+            exit 1
+            ;;
+          esac
 
           echo "Bumping $bump_type Version"
-          echo "Previous Version: $current_version"
+          echo "Current Version: $current_version"
+          echo "Labels attached to the Pull Request: $labels"
           echo "New Version: $new_version"
           echo "bump_type=$bump_type" >> $GITHUB_ENV
           echo "new_version=$new_version" >> $GITHUB_ENV
-
 
 #      - name: Get LABELS
 #        id: get-labels
