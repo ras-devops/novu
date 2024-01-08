@@ -49,7 +49,7 @@ jobs:
     timeout-minutes: 80
     environment: Development
     permissions:
-      contents: read
+      contents: write
       packages: write
       deployments: write
       id-token: write
@@ -122,6 +122,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           custom_tag: ${{ needs.get_version.outputs.env_tag }}
+          tag_prefix: ''
 
 #      - name: Checkout cloud infra
 #        if: ${{ contains (matrix.name,'-ee') }}
