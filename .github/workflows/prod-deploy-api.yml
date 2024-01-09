@@ -5,6 +5,12 @@ name: Deploy PROD API
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+  deployments: write
+  id-token: write
+
 jobs:
 #  test_api:
 #    strategy:
