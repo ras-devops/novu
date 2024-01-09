@@ -22,6 +22,7 @@ jobs:
     uses: ./.github/workflows/get-version.yml
     permissions:
       contents: read
+      pull-requests: read
     with:
       environment: Development
       environment_short: dev
