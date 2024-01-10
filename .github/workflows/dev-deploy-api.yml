@@ -41,11 +41,10 @@ jobs:
     timeout-minutes: 80
     environment: Development
     permissions:
-      contents: write
+      contents: read
       packages: write
       deployments: write
       id-token: write
-      pull-requests: read
     strategy:
       matrix:
 #        name: ['novu/api-ee', 'novu/api']
@@ -66,6 +65,8 @@ jobs:
           echo "IMAGE_TAG = $IMAGE_TAG"
           echo "SHA_SHORT = $SHA_SHORT"
           echo "SHA = $SHA"
+          echo "RELEASE_VERSION=${{ github.ref_name }}"
+          echo "$RELEASE_VERSION"
 
       - uses: ./.github/actions/setup-project
 #        with:
