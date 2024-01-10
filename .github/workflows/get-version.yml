@@ -14,7 +14,7 @@ on:
       env_tag:
         description: 'The new version of the application'
         value: ${{ jobs.get_version.outputs.new_version }}
-      previous_tag:
+      current_tag:
         description: 'The current version of the application'
         value: ${{ jobs.get_version.outputs.current_version }}
       sha:
@@ -80,7 +80,7 @@ jobs:
           gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
 
       - name: Semantic Custom Version Bumping
-        uses: ras-devops/determine-version-bump@v1.0.7
+        uses: ras-devops/determine-version-bump@v1.0.9
         id: determine_bump
         with:
           current_version: ${{ steps.previoustag.outputs.tag }}
