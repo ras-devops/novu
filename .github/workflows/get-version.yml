@@ -86,6 +86,12 @@ jobs:
           current_version: ${{ steps.previoustag.outputs.tag }}
           list_labels_file_patch: /tmp/label_list
 
+      - name: TEST job
+        id: test-cond
+        if: if: contains(inputs.environment_short, '-prod')
+        run: |
+          echo "YES!"
+
 #      - name: Determine Version Bump
 #        id: determine_bump
 #        run: |
