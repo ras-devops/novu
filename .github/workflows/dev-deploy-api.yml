@@ -25,7 +25,7 @@ jobs:
       pull-requests: read
     with:
       environment: Development
-      environment_short: dev-prod
+      environment_short: prod
     secrets: inherit
 
   test_api:
