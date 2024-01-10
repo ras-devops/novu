@@ -53,7 +53,7 @@ jobs:
     secrets: inherit
 
   push_git_tag:
-    needs: publish_docker_image_webhook
+    needs: [publish_docker_image_webhook, get_vesrion]
     uses: ./.github/workflows/push-git-tag.yml
     permissions:
       contents: write
