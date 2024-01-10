@@ -28,9 +28,6 @@ jobs:
     uses: ./.github/workflows/get-version.yml
     permissions:
       contents: read
-      packages: write
-      deployments: write
-      id-token: write
       pull-requests: read
     with:
       environment: Development
@@ -53,7 +50,7 @@ jobs:
     secrets: inherit
 
   push_git_tag:
-    needs: [publish_docker_image_webhook, get_vesrion]
+    needs: [publish_docker_image_webhook, get_version]
     uses: ./.github/workflows/push-git-tag.yml
     permissions:
       contents: write
