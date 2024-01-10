@@ -78,7 +78,7 @@ jobs:
         env:
           REGISTRY_OWNER: novuhq
           DOCKER_NAME: ${{matrix.name}}
-          IMAGE_TAG: ${{ needs.get_version.outputs.env_tag }}-prod
+          IMAGE_TAG: ${{ needs.get_version.outputs.current_tag }}-prod
           GH_ACTOR: ${{ github.actor }}
           GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
           DEPOT_PROJECT_ID: jbwgz4l0c0
