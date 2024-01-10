@@ -108,7 +108,7 @@ jobs:
           bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
 
   push_git_tag:
-    needs: [deploy_dev_api]
+    needs: [deploy_dev_api, get_version]
     uses: ./.github/workflows/push-git-tag.yml
     permissions:
       contents: write
