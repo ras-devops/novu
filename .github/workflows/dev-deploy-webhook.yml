@@ -52,6 +52,16 @@ jobs:
       depot_project_id: jbwgz4l0c0
     secrets: inherit
 
+  push_git_tag:
+    needs: publish_docker_image_webhook
+    uses: ./.github/workflows/push-git-tag.yml
+    permissions:
+      contents: write
+    with:
+      environment: Development
+      environment_short: dev
+      custom_tag: ${{ needs.get_version.outputs.env_tag }}
+
 #  deploy_dev_webhook:
 #    if: "!contains(github.event.head_commit.message, 'ci skip')"
 #    needs: publish_docker_image_webhook
