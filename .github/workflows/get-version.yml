@@ -78,13 +78,15 @@ jobs:
         run: |
           echo "The Pull request Number for labels getting is ${{ env.PR_NUMBER }}"
           gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
+          echo "pr_labels=$(cat /tmp/label_list)" >> $GITHUB_OUTPUT
+          echo $pr_labels
 
       - name: Semantic Custom Version Bumping
-        uses: ras-devops/determine-version-bump@v1.0.10
+        uses: ras-devops/determine-version-bump@v1.0.11
         id: determine_bump
         with:
           current_version: ${{ steps.previoustag.outputs.tag }}
-          list_labels_file_patch: /tmp/label_list
+          list_labels_file_patch: ${{ steps.get-labels.outputs.pr_labels }}
 
       - name: TEST job
         id: test-cond
