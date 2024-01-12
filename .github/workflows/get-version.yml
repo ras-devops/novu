@@ -12,10 +12,10 @@ on:
         type: string
     outputs:
       env_tag:
-        description: 'The new version of the application'
+        description: 'The new version'
         value: ${{ jobs.get_version.outputs.new_version }}
       current_tag:
-        description: 'The current version of the application'
+        description: 'The current version'
         value: ${{ jobs.get_version.outputs.current_version }}
       sha:
         description: 'The current sha of the code'
@@ -80,7 +80,7 @@ jobs:
           gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
 
       - name: Semantic Custom Version Bumping
-        uses: ras-devops/determine-version-bump@latest
+        uses: novuhq/semver-tag-action@v0.0.1
         id: determine_bump
         with:
           current_version: ${{ steps.previoustag.outputs.tag }}
