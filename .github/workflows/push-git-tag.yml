@@ -18,6 +18,7 @@ on:
 jobs:
   push_git_tag:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/next'
     timeout-minutes: 30
     environment: ${{ inputs.environment }}
     permissions:
