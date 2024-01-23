@@ -30,6 +30,7 @@ jobs:
       - name: Lerna tags a repo
         id: tag_version
         run: |
+          pnpm install
           lerna version --conventional-commits --yes --exact ${{ inputs.custom_tag }}
 
 #      - name: Push tag
