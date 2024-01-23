@@ -58,7 +58,7 @@ jobs:
 
       - name: Pull Request data
         id: show-pr-data
-        if: ${{ steps.get_pr_data.outputs.result != '[]' }}
+        if: ${{ ne(fromJson(steps.get_pr_data.outputs.result).number, '') && ne(fromJson(steps.get_pr_data.outputs.result).number, null) }}
         run: |
           echo "${{ fromJson(steps.get_pr_data.outputs.result).number }}"
           echo "${{ fromJson(steps.get_pr_data.outputs.result).title }}"
@@ -72,7 +72,7 @@ jobs:
 
       - name: Get LABELS
         id: get-labels
-        if: ${{ steps.get_pr_data.outputs.result != '[]' }}
+        if: ${{ ne(fromJson(steps.get_pr_data.outputs.result).number, '') && ne(fromJson(steps.get_pr_data.outputs.result).number, null) }}
         env:
           PR_NUMBER: ${{ steps.show-pr-data.outputs.pr_number }}
           GH_TOKEN: ${{ github.token }}
