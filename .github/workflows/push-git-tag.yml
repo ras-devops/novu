@@ -18,6 +18,7 @@ on:
 jobs:
   push_git_tag:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/next'
     timeout-minutes: 30
     environment: ${{ inputs.environment }}
     permissions:
@@ -32,4 +33,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           custom_tag: ${{ inputs.custom_tag }}
+          create_annotated_tag: true
           tag_prefix: ''
