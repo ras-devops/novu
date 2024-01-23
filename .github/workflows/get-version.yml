@@ -56,8 +56,14 @@ jobs:
               })
             ).data[0];
 
+      - name: Echo pr data
+        id: echo-pr-data
+        run: |
+          echo "${{ steps.get_pr_data.outputs.result }}"
+
       - name: Pull Request data
         id: show-pr-data
+        if: ${{ steps.get_pr_data.outputs.result != '' || steps.get_pr_data.outputs.result != null}}
         run: |
           echo "${{ fromJson(steps.get_pr_data.outputs.result).number }}"
           echo "${{ fromJson(steps.get_pr_data.outputs.result).title }}"
@@ -71,6 +77,7 @@ jobs:
 
       - name: Get LABELS
         id: get-labels
+        if: ${{ steps.get_pr_data.outputs.result != '' || steps.get_pr_data.outputs.result != null}}
         env:
           PR_NUMBER: ${{ steps.show-pr-data.outputs.pr_number }}
           GH_TOKEN: ${{ github.token }}
@@ -79,7 +86,7 @@ jobs:
           gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
 
       - name: Semantic Custom Version Bumping
-        uses: ras-devops/determine-version-bump@v1.0.18
+        uses: ras-devops/determine-version-bump@v1.0.19
         id: determine_bump
         with:
           current_version: ${{ steps.previoustag.outputs.tag }}
