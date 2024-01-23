@@ -41,6 +41,7 @@ jobs:
       pull-requests: read
     steps:
       - uses: ahmadnassri/action-workflow-queue@v1
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next'
         with:
           timeout: 7200000
 
@@ -83,7 +84,7 @@ jobs:
           gh api -H "Accept: application/vnd.github+json" /repos/ras-devops/novu/issues/${{ env.PR_NUMBER }}/labels | jq '[.[].name]' > /tmp/label_list
 
       - name: Semantic Custom Version Bumping
-        uses: ras-devops/determine-version-bump@v1.0.17
+        uses: ras-devops/determine-version-bump@v1.0.latest
         id: determine_bump
         with:
           current_version: ${{ steps.previoustag.outputs.tag }}
