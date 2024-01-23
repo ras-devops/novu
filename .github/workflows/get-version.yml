@@ -59,8 +59,6 @@ jobs:
       - name: Pull Request data
         id: show-pr-data
         run: |
-#          echo "${{ fromJson(steps.get_pr_data.outputs.result).number }}"
-#          echo "${{ fromJson(steps.get_pr_data.outputs.result).title }}"
           echo "pr_number=${{ fromJson(steps.get_pr_data.outputs.result).number }}" >> $GITHUB_OUTPUT
           echo "pr_title=${{ fromJson(steps.get_pr_data.outputs.result).title }}" >> $GITHUB_OUTPUT
 
