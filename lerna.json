@@ -1,7 +1,6 @@
 {
   "npmClient": "pnpm",
   "useNx": true,
-  "useWorkspaces": true,
   "packages": ["apps/*", "libs/*", "packages/*", "enterprise/packages/*", "enterprise/packages/*/*", "providers/*"],
   "command": {
     "publish": {
