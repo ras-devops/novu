@@ -27,11 +27,18 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Push tag
+      - name: Lerna tags a repo
         id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
+        run: |
+          lerna version --conventional-commits --yes --exact ${{ inputs.custom_tag }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: ${{ inputs.custom_tag }}
-          create_annotated_tag: true
-          tag_prefix: ''
+
+#      - name: Push tag
+#        id: tag_version
+#        uses: mathieudutour/github-tag-action@v6.1
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          custom_tag: ${{ inputs.custom_tag }}
+#          create_annotated_tag: true
+#          tag_prefix: ''
