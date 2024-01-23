@@ -27,10 +27,13 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - uses: ./.github/actions/setup-project
+#        with:
+#          slim: 'true'
+#          submodules: ${{ contains (matrix.name,'-ee') }}
       - name: Lerna tags a repo
         id: tag_version
         run: |
-          pnpm install
           lerna version --conventional-commits --yes --exact ${{ inputs.custom_tag }}
 
 #      - name: Push tag
