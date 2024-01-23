@@ -56,11 +56,6 @@ jobs:
               })
             ).data[0];
 
-      - name: Echo pr data
-        id: echo-pr-data
-        run: |
-          echo "${{ steps.get_pr_data.outputs.result }}"
-
       - name: Pull Request data
         id: show-pr-data
         if: ${{ steps.get_pr_data.outputs.result != '' || steps.get_pr_data.outputs.result != null}}
