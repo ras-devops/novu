@@ -31,8 +31,6 @@ jobs:
         id: tag_version
         run: |
           lerna version --conventional-commits --yes --exact ${{ inputs.custom_tag }}
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
 #      - name: Push tag
 #        id: tag_version
