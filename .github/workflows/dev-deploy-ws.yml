@@ -91,7 +91,6 @@ jobs:
 #        if: ${{contains(matrix.name, 'ee')}}
 
       - name: Build, tag, and push image to Amazon ECR
-        needs: get_version
         id: build-image
         env:
           REGISTRY_OWNER: novuhq
