@@ -97,7 +97,7 @@ jobs:
           DOCKER_NAME: ${{ matrix.name }}
           IMAGE_TAG: ${{ needs.get_version.outputs.env_tag }}
           GH_ACTOR: ${{ github.actor }}
-          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
+          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin 
           docker buildx build -t ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG --build-arg BULL_MQ_PRO_TOKEN=${BULL_MQ_PRO_NPM_TOKEN} --platform linux/arm64/v8,linux/amd64 -f apps/ws/Dockerfile .
