@@ -24,6 +24,15 @@ jobs:
       environment_short: prod
     secrets: inherit
 
+  # This workflow contains a single job called "build"
+  deploy_ws:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    needs: get_version
+    timeout-minutes: 80
+    environment: Development
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v3
