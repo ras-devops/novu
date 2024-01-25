@@ -6,6 +6,7 @@ ENV NX_DAEMON=false
 
 RUN npm install -g pnpm@8.9.0 --loglevel notice
 RUN npm i pm2 -g
+RUN apk --no-cache add curl py3-pip
 
 USER 1000
 WORKDIR /usr/src/app
@@ -31,8 +32,8 @@ RUN if [ -n '${BULL_MQ_PRO_NPM_TOKEN}' ] ; then echo 'Building with Enterprise E
 RUN if [ -n '${BULL_MQ_PRO_NPM_TOKEN}' ]; then rm -f .npmrc ; fi
 RUN if [ -n '${BULL_MQ_PRO_NPM_TOKEN}' ]; then cp .npmrc-cloud .npmrc; fi
 
-#RUN pnpm install --reporter=silent
-#RUN pnpm build:ws
+RUN pnpm install --verbose
+RUN pnpm build:ws
 
 RUN if $BULL_MQ_PRO_NPM_TOKEN ; then rm -f .npmrc ; fi
 
@@ -43,4 +44,4 @@ RUN cp src/.env.test dist/src/.env.test
 RUN cp src/.env.development dist/src/.env.development
 RUN cp src/.env.production dist/src/.env.production
 
-#CMD [ "pm2-runtime", "dist/src/main.js" ]
+CMD [ "pm2-runtime", "dist/src/main.js" ]
