@@ -37,9 +37,8 @@ runs:
       shell: bash
       run: pnpm build:api
 
-    - uses: crazy-max/ghaction-setup-docker@v2
+    - uses: crazy-max/ghaction-setup-docker@v3
       with:
-        version: v24.0.6
         daemon-config: |
           {
             "features": {
