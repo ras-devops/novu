@@ -14,93 +14,111 @@ env:
   TF_WORKSPACE: novu-dev
 
 jobs:
-  test_ws:
-    strategy:
-      matrix:
-        name: ['novu/ws-ee', 'novu/ws']
-    uses: ./.github/workflows/reusable-ws-e2e.yml
+  get_version:
+    uses: ./.github/workflows/get-version.yml
+    permissions:
+      contents: read
+      pull-requests: read
     with:
-      ee: ${{ contains (matrix.name,'-ee') }}
+      environment: Development
+      environment_short: prod
     secrets: inherit
 
-  # This workflow contains a single job called "build"
   deploy_ws:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    needs: test_ws
+    needs: ['get_version']
     timeout-minutes: 80
     environment: Development
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     strategy:
       matrix:
-        name: ['novu/ws-ee']
+        name: ['novu/ws']
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: ${{ contains (matrix.name,'-ee') }}
-          token: ${{ secrets.SUBMODULES_TOKEN }}
+#        with:
+#          submodules: ${{ contains (matrix.name,'-ee') }}
+#          token: ${{ secrets.SUBMODULES_TOKEN }}
       - uses: ./.github/actions/setup-project
+#        with:
+#          submodules: ${{ contains (matrix.name,'-ee') }}
+
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: eu-west-2
+#
+#      - name: Checkout cloud infra
+#        uses: actions/checkout@master
+#        with:
+#          repository: novuhq/cloud-infra
+#          token: ${{ secrets.GH_PACKAGES }}
+#          path: cloud-infra
+#
+#      - name: Terraform setup
+#        uses: hashicorp/setup-terraform@v1
+#        with:
+#          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+#          terraform_version: 1.5.5
+#          terraform_wrapper: false
+#      - name: Terraform Init
+#        working-directory: cloud-infra/terraform/novu/aws
+#        run: terraform init
+#
+#      - name: Terraform get output
+#        working-directory: cloud-infra/terraform/novu/aws
+#        id: terraform
+#        run: |
+#          echo "ws_ecs_container_name=$(terraform output -json ws_ecs_container_name | jq -r .)" >> $GITHUB_ENV
+#          echo "ws_ecs_service=$(terraform output -json ws_ecs_service | jq -r .)" >> $GITHUB_ENV
+#          echo "ws_ecs_cluster=$(terraform output -json ws_ecs_cluster | jq -r .)" >> $GITHUB_ENV
+#          echo "ws_task_name=$(terraform output -json ws_task_name | jq -r .)" >> $GITHUB_ENV
+#
+#      - name: Download task definition
+#        run: |
+#          aws ecs describe-task-definition --task-definition ${{ env.ws_task_name }} \
+#          --query taskDefinition > task-definition.json
+#
+#
+#      - name: Set Bull MQ Env variable for EE
+#        shell: bash
+#        run: |
+#          echo "BULL_MQ_PRO_NPM_TOKEN=${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}" >> $GITHUB_ENV
+#        if: ${{contains(matrix.name, 'ee')}}
+
+      - uses: crazy-max/ghaction-setup-docker@v2
         with:
-          submodules: ${{ contains (matrix.name,'-ee') }}
+          version: v24.0.6
+          daemon-config: |
+            {
+              "features": {
+                "containerd-snapshotter": true
+              }
+            }
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-2
+          platforms: linux/amd64,linux/arm64
 
-      - name: Checkout cloud infra
-        uses: actions/checkout@master
-        with:
-          repository: novuhq/cloud-infra
-          token: ${{ secrets.GH_PACKAGES }}
-          path: cloud-infra
-
-      - name: Terraform setup
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-          terraform_version: 1.5.5
-          terraform_wrapper: false
-      - name: Terraform Init
-        working-directory: cloud-infra/terraform/novu/aws
-        run: terraform init
-
-      - name: Terraform get output
-        working-directory: cloud-infra/terraform/novu/aws
-        id: terraform
-        run: |
-          echo "ws_ecs_container_name=$(terraform output -json ws_ecs_container_name | jq -r .)" >> $GITHUB_ENV
-          echo "ws_ecs_service=$(terraform output -json ws_ecs_service | jq -r .)" >> $GITHUB_ENV
-          echo "ws_ecs_cluster=$(terraform output -json ws_ecs_cluster | jq -r .)" >> $GITHUB_ENV
-          echo "ws_task_name=$(terraform output -json ws_task_name | jq -r .)" >> $GITHUB_ENV
-
-      - name: Download task definition
-        run: |
-          aws ecs describe-task-definition --task-definition ${{ env.ws_task_name }} \
-          --query taskDefinition > task-definition.json
-
-
-      - name: Set Bull MQ Env variable for EE
-        shell: bash
-        run: |
-          echo "BULL_MQ_PRO_NPM_TOKEN=${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}" >> $GITHUB_ENV
-        if: ${{contains(matrix.name, 'ee')}}
+      - name: Set Up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
           REGISTRY_OWNER: novuhq
           DOCKER_NAME: ${{ matrix.name }}
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: ${{ needs.get_version.outputs.env_tag }}
           GH_ACTOR: ${{ github.actor }}
-          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
+          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin 
-          docker build -t ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG --build-arg BULL_MQ_PRO_TOKEN=${BULL_MQ_PRO_NPM_TOKEN} -f apps/ws/Dockerfile . 
+          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
+          docker buildx build -t ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG --build-arg BULL_MQ_PRO_TOKEN=${BULL_MQ_PRO_NPM_TOKEN} --load --platform linux/arm64,linux/amd64 -f apps/ws/Dockerfile .
           docker run --network=host --name api -dit --env NODE_ENV=test ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
           docker run --network=host appropriate/curl --retry 10 --retry-delay 5 --retry-connrefused http://localhost:1340/v1/health-check | grep 'ok'
           docker tag ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:dev

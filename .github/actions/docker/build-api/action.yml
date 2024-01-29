@@ -37,14 +37,22 @@ runs:
       shell: bash
       run: pnpm build:api
 
-    - name: 🚢 Setup Depot
-      uses: depot/setup-action@v1
-      if: ${{ inputs.fork == 'false' }}
+    - uses: crazy-max/ghaction-setup-docker@v3
       with:
-        oidc: true
+        daemon-config: |
+          {
+            "features": {
+              "containerd-snapshotter": true
+            }
+          }
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+    - name: Setup QEMU
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: linux/amd64,linux/arm64
+
+    - name: Set Up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
     - name: Login To Registry
       if: ${{ inputs.fork == 'true' }}
@@ -74,6 +82,7 @@ runs:
       run: |
         set -x
         cd apps/api && pnpm run docker:build:depot --build-arg BULL_MQ_PRO_TOKEN=${BULL_MQ_PRO_NPM_TOKEN}
+
     - name: Build with Buildx, tag, and test
       if: ${{ inputs.fork == 'true' }} # Use buildx for forks as they can't access secrets
       shell: bash
