@@ -1,4 +1,6 @@
-FROM nikolaik/python-nodejs:python3.10-nodejs16-alpine as dev_base
+FROM node:20-alpine3.19 as dev_base
+RUN apk add g++ make py3-pip
+
 ARG BULL_MQ_PRO_TOKEN
 ENV BULL_MQ_PRO_NPM_TOKEN=$BULL_MQ_PRO_TOKEN
 ENV NX_DAEMON=false
@@ -13,9 +15,9 @@ WORKDIR /usr/src/app
 FROM dev_base AS dev
 ARG PACKAGE_PATH
 
-COPY ./meta .
-COPY ./deps .
-COPY ./pkg .
+COPY --chown=1000:1000 ./meta .
+COPY --chown=1000:1000 ./deps .
+COPY --chown=1000:1000 ./pkg .
 
 RUN if [ -n '${BULL_MQ_PRO_NPM_TOKEN}' ] ; then echo 'Building with Enterprise Edition of Novu' ; fi
 RUN if [ -n '${BULL_MQ_PRO_NPM_TOKEN}' ]; then rm -f .npmrc ; fi
@@ -54,10 +56,10 @@ ENV CI=true
 
 WORKDIR /usr/src/app
 
-COPY ./meta .
+COPY --chown=1000:1000 ./meta .
 
 # Get the build artifacts that only include dist folders
-COPY --from=assets /usr/src/app .
+COPY --chown=1000:1000 --from=assets /usr/src/app .
 
 RUN --mount=type=cache,id=pnpm-store-api,target=/root/.pnpm-store\
  pnpm install --filter "{${PACKAGE_PATH}}..." \
