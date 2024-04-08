@@ -15,7 +15,7 @@ on:
       - 'libs/dal/**'
       - 'libs/shared/**'
 env:
-  REGISTRY_IMAGE: ghcr.io/novuhq/novu/api
+  REGISTRY_IMAGE: ghcr.io/ras-devops/novu/api
 
 jobs:
   get_version:
