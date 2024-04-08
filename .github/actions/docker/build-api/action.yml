@@ -144,7 +144,7 @@ runs:
       run: |
         mkdir -p /tmp/digests
         cd apps/api
-        digest=$(cat metadata.json)
+        digest=$(jq -r '.containerimage.digest' metadata.json)
         touch "/tmp/digests/${digest#sha256:}"
 
     - name: Upload digest
