@@ -117,7 +117,6 @@ jobs:
       contents: read
       pull-requests: read
     with:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
       docker_name: novu/api
       REGISTRY_IMAGE: ghcr.io/novuhq/novu/api
     needs: [deploy_dev_api]
