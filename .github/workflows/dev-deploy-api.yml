@@ -49,6 +49,9 @@ jobs:
       matrix:
 #        name: ['novu/api-ee', 'novu/api']
         name: ['novu/api']
+        platform:
+          - linux/amd64
+          - linux/arm64
     steps:
       - uses: actions/checkout@v3
 #        with:
