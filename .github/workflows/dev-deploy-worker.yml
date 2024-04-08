@@ -11,7 +11,7 @@ on:
     paths:
       - 'package.json'
       - 'yarn.lock'
-      - 'apps/api/**'
+#      - 'apps/api/**'
       - 'libs/dal/**'
       - 'libs/shared/**'
       - 'libs/testing/**'
