@@ -117,8 +117,8 @@ jobs:
       contents: read
       pull-requests: read
     with:
-      docker_name: novu/api
-      REGISTRY_IMAGE: ghcr.io/novuhq/novu/api
+      docker_name: "novu/api"
+      REGISTRY_IMAGE: "ghcr.io/novuhq/novu/api"
     needs: [deploy_dev_api]
 
 #  push_git_tag:
