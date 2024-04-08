@@ -110,16 +110,16 @@ jobs:
           docker_name: ${{ matrix.name }}
           bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
 
-  push_git_tag:
-    needs: [deploy_dev_api, get_version]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next'
-    uses: ./.github/workflows/push-git-tag.yml
-    permissions:
-      contents: write
-    with:
-      environment: Development
-      environment_short: dev
-      custom_tag: ${{ needs.get_version.outputs.env_tag }}
+#  push_git_tag:
+#    needs: [deploy_dev_api, get_version]
+#    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next'
+#    uses: ./.github/workflows/push-git-tag.yml
+#    permissions:
+#      contents: write
+#    with:
+#      environment: Development
+#      environment_short: dev
+#      custom_tag: ${{ needs.get_version.outputs.env_tag }}
 
 #  release:
 #    name: Release

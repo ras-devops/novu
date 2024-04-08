@@ -40,19 +40,10 @@ runs:
     # TODO Removed when migrated to action matrix for each build type
     - uses: ./.github/actions/free-space
 
-    - uses: crazy-max/ghaction-setup-docker@v3
-      with:
-        daemon-config: |
-          {
-            "features": {
-              "containerd-snapshotter": true
-            }
-          }
-
-    - name: Setup QEMU
-      uses: docker/setup-qemu-action@v3
-      with:
-        platforms: linux/amd64,linux/arm64
+    - name: Prepare
+      run: |
+        platform=${{ matrix.platform }}
+        echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
     - name: Set Up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -96,6 +87,8 @@ runs:
       run: |
         set -x
         cd apps/api && pnpm run docker:build
+        ls -la
+        cat metadata.json
 
     - name: Tag and test
       id: build-image
@@ -144,3 +137,18 @@ runs:
         DOCKER_NAME: ${{ inputs.docker_name }}
       run: |
         docker push ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:${{ inputs.tag }}
+
+    - name: Export digest
+      run: |
+        mkdir -p /tmp/digests
+        cd apps/api
+        digest="${{ cat metadata.json }}"
+        touch "/tmp/digests/${digest#sha256:}"
+
+    - name: Upload digest
+      uses: actions/upload-artifact@v4
+      with:
+        name: digests-${{ env.PLATFORM_PAIR }}
+        path: /tmp/digests/*
+        if-no-files-found: error
+        retention-days: 1
