@@ -147,6 +147,11 @@ jobs:
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
       -
+        name: Echo DOCKER_METADATA_OUTPUT_JSON
+        shell: bash
+        run: |
+          echo $DOCKER_METADATA_OUTPUT_JSON
+      -
         name: Create manifest list and push
         working-directory: /tmp/digests
         run: |

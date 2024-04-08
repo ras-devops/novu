@@ -147,6 +147,8 @@ runs:
         digest=$(jq -r '."containerimage.digest"' ./metadata.json)
         touch "/tmp/digests/${digest#sha256:}"
         ls -la /tmp/digests/
+        docker inspect --format='{{index .RepoDigests 0}}' $(cat image-id.txt)
+        cat image-id.txt
 
     - name: Upload digest
       uses: actions/upload-artifact@v4
