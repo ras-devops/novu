@@ -120,7 +120,6 @@ jobs:
       github_token: ${{ secrets.GITHUB_TOKEN }}
       docker_name: novu/api
       REGISTRY_IMAGE: ghcr.io/novuhq/novu/api
-    secrets: inherit
     needs: [deploy_dev_api]
 
 #  push_git_tag:
