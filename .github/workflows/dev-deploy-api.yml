@@ -110,7 +110,7 @@ jobs:
           docker_name: ${{ matrix.name }}
           bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
 
-      - uses: ./.github/actions/digest/merge.yml
+      - uses: ./.github/actions/digest
         with:
           tag: ${{ needs.get_version.outputs.env_tag }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
