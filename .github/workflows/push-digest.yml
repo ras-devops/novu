@@ -1,0 +1,59 @@
+name: "Manifests merging"
+
+name: "Git tag Push"
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+on:
+  workflow_call:
+    inputs:
+      docker_name:
+        description: 'Name for docker image'
+        required: true
+      github_token:
+        description: 'The token to use for logging into ghcr.io'
+        required: true
+      REGISTRY_IMAGE:
+        description: 'REGISTRY_IMAGE'
+        required: true
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  runs:
+    using: composite
+    steps:
+      -
+        name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digests-*
+          merge-multiple: true
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ inputs.REGISTRY_IMAGE }}
+
+      - name: Login To Registry
+        shell: bash
+        env:
+          GH_ACTOR: ${{ github.actor }}
+          GH_PASSWORD: ${{ inputs.github_token }}
+        run: |
+          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
+      -
+        name: Create manifest list and push
+        working-directory: /tmp/digests
+        shell: bash
+        run: |
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ inputs.REGISTRY_IMAGE }}@sha256:%s ' *)
+      -
+        name: Inspect image
+        shell: bash
+        run: |
+          docker buildx imagetools inspect ${{ inputs.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
