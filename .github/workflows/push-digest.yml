@@ -7,6 +7,9 @@ on:
       docker_name:
         description: 'Name for docker image'
         required: true
+      github_token:
+        description: 'The token to use for logging into ghcr.io'
+        required: true
       REGISTRY_IMAGE:
         description: 'REGISTRY_IMAGE'
         required: true
@@ -37,7 +40,7 @@ jobs:
         shell: bash
         env:
           GH_ACTOR: ${{ github.actor }}
-          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          GH_PASSWORD: ${{ inputs.github_token }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
       -
