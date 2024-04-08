@@ -146,6 +146,7 @@ runs:
         cd apps/api
         digest=$(jq -r '.containerimage.digest' metadata.json)
         touch "/tmp/digests/${digest#sha256:}"
+        ls -la /tmp/digests/
 
     - name: Upload digest
       uses: actions/upload-artifact@v4
