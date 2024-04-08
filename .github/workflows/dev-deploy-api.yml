@@ -116,6 +116,7 @@ jobs:
     timeout-minutes: 80
     environment: Development
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/digest
         id: digest
         with:
