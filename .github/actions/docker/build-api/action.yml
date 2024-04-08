@@ -41,6 +41,7 @@ runs:
     - uses: ./.github/actions/free-space
 
     - name: Prepare
+      shell: bash
       run: |
         platform=${{ matrix.platform }}
         echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
@@ -139,6 +140,7 @@ runs:
         docker push ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:${{ inputs.tag }}
 
     - name: Export digest
+      shell: bash
       run: |
         mkdir -p /tmp/digests
         cd apps/api
