@@ -123,16 +123,6 @@ jobs:
     secrets: inherit
     needs: [deploy_dev_api]
 
-  get_version:
-    uses: ./.github/workflows/get-version.yml
-    permissions:
-      contents: read
-      pull-requests: read
-    with:
-      environment: Development
-      environment_short: prod
-    secrets: inherit
-
 #  push_git_tag:
 #    needs: [deploy_dev_api, get_version]
 #    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next'
