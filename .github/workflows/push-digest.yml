@@ -7,6 +7,9 @@ on:
       docker_name:
         description: 'Name for docker image'
         required: true
+      custom_tag:
+        description: 'Image TAG'
+        required: true
       github_token:
         description: 'The token to use for logging into ghcr.io'
         required: true
@@ -16,8 +19,9 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  runs:
-    using: composite
+  merge_digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
     steps:
       -
         name: Download digests
@@ -33,25 +37,38 @@ jobs:
         name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
+        env:
+          IMAGE_TAG: ${{ inputs.custom_tag }}
+          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}
         with:
-          images: ${{ inputs.REGISTRY_IMAGE }}
-
-      - name: Login To Registry
+          images: ${{ env.REGISTRY_IMAGE }}
+          tags: ${{ env.IMAGE_TAG }}
+      -
+        name: Login To Registry
         shell: bash
         env:
           GH_ACTOR: ${{ github.actor }}
-          GH_PASSWORD: ${{ inputs.github_token }}
+          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
       -
+        name: Echo DOCKER_METADATA_OUTPUT_JSON
+        shell: bash
+        run: |
+          echo $DOCKER_METADATA_OUTPUT_JSON
+      -
         name: Create manifest list and push
         working-directory: /tmp/digests
-        shell: bash
+        env:
+          IMAGE_TAG: ${{ inputs.custom_tag }}
+          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ inputs.REGISTRY_IMAGE }}@sha256:%s ' *)
+            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
       -
         name: Inspect image
-        shell: bash
+        env:
+          IMAGE_TAG: ${{ inputs.custom_tag }}
+          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }
         run: |
-          docker buildx imagetools inspect ${{ inputs.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}
