@@ -46,6 +46,12 @@ runs:
         platform=${{ matrix.platform }}
         echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ghcr.io/ras-devops/${{ inputs.docker_name }}
+
     - name: Login To Registry
       shell: bash
       env:
@@ -59,6 +65,15 @@ runs:
       run: |
         echo "BULL_MQ_PRO_NPM_TOKEN=gug4aim0vat7aefo0ood4iux4oej1Zaa" >> $GITHUB_ENV
       if: contains( inputs.docker_name  , 'ee')
+
+    - name: Build and push by digest
+      id: build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: ${{ matrix.platform }}
+        labels: ${{ steps.meta.outputs.labels }}
+        outputs: type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true,push=true
 
     - name: Build with Buildx, tag, and test
       shell: bash
