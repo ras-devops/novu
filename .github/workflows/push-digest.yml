@@ -61,7 +61,7 @@ jobs:
         working-directory: /tmp/digests
         env:
           IMAGE_TAG: ${{ inputs.custom_tag }}
-          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }
+          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}  # Corrected line
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
