@@ -119,6 +119,8 @@ jobs:
 
   merge:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs:
       - deploy_dev_api
     steps:
