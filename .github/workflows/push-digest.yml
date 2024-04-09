@@ -68,6 +68,6 @@ jobs:
       - name: Inspect image
         env:
           IMAGE_TAG: ${{ inputs.custom_tag }}
-          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }
+          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}
