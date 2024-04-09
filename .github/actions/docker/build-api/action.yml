@@ -74,7 +74,7 @@ runs:
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
         PLATFORM: ${{ matrix.platform }}
-        REGISTRY_IMAGE: ghcr.io/ras-devops/${{ inputs.docker_name }}
+        REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
       run: |
         echo "PLATFORM=${{ matrix.platform }}" >> $GITHUB_ENV
         echo $PLATFORM
