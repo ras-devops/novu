@@ -126,7 +126,6 @@ runs:
       run: |
         mkdir -p /tmp/digests
         cd apps/api
-#        digest=$(jq -r '."containerimage.digest"' ./metadata.json)
         image_id=$(cat image-id.txt)
         digest=$(docker inspect --format='{{index .RepoDigests 0}}' "$image_id")
         touch "/tmp/digests/${digest#sha256:}"
