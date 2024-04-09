@@ -75,6 +75,8 @@ runs:
         GH_PASSWORD: ${{ inputs.github_token }}
         PLATFORM: ${{ matrix.platform }}
       run: |
+        echo "PLATFORM=${{ matrix.platform }} >> $GITHUB_ENV
+        echo $PLATFORM
         set -x
         cd apps/api && pnpm run docker:build
         ls -la
