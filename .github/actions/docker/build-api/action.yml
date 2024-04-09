@@ -131,9 +131,11 @@ runs:
       run: |
         mkdir -p /tmp/digests
         cd apps/api
+        echo "--------------------------------------"
+        cat image-id.txt
         image_id=$(cat image-id.txt)
         digest=$(docker inspect --format='{{index .RepoDigests 0}}' "$image_id")
-        touch "/tmp/digests/${digest#sha256:}"
+        touch "/tmp/digests/${digest#ghcr.io/ras-devops/novu/api@sha256:}"
         ls -la /tmp/digests/
         echo "-----------------INSPECT------------------"
         docker inspect --format='{{index .RepoDigests 0}}' $(cat image-id.txt)
