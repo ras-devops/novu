@@ -33,8 +33,6 @@ jobs:
     environment: ${{ inputs.environment }}
     permissions:
       packages: write
-      deployments: write
-      id-token: write
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
