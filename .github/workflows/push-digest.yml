@@ -22,6 +22,10 @@ jobs:
   merge_digest:
     runs-on: ubuntu-latest
     timeout-minutes: 80
+    permissions:
+      packages: write
+      deployments: write
+      id-token: write
     steps:
       -
         name: Download digests
