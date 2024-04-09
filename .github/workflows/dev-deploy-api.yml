@@ -110,18 +110,13 @@ jobs:
           docker_name: ${{ matrix.name }}
           bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
 
-#      - uses: ./.github/actions/digest
-#        id: digest
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          docker_name: ${{ matrix.name }}
-#          REGISTRY_IMAGE: ghcr.io/novuhq/${{ matrix.name }}
-
   push_digest:
     needs: [deploy_dev_api, get_version]
     uses: ./.github/workflows/push-digest.yml
     permissions:
       packages: write
+    env:
+      REGISTRY_IMAGE: ghcr.io/ras-devops/novu/api
     with:
       environment: Development
       environment_short: dev
