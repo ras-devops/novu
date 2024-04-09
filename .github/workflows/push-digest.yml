@@ -1,7 +1,7 @@
 name: "Manifests merging"
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       docker_name:
         description: 'Name for docker image'
