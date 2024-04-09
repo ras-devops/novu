@@ -1,6 +1,6 @@
-name: Build API Docker Image
+name: Build Docker Image
 
-description: 'Builds a docker image for the API'
+description: 'Builds a docker image'
 
 inputs:
   tag:
@@ -65,6 +65,26 @@ runs:
         echo "BULL_MQ_PRO_NPM_TOKEN=gug4aim0vat7aefo0ood4iux4oej1Zaa" >> $GITHUB_ENV
       if: contains( inputs.docker_name  , 'ee')
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     - name: Build with Buildx, tag, and test
       shell: bash
       env:
@@ -73,7 +93,6 @@ runs:
         IMAGE_TAG: ${{ github.sha }}
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
-        PLATFORM: ${{ matrix.platform }}
       run: |
         set -x
         cd apps/api && pnpm run docker:build
