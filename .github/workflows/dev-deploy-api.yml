@@ -117,17 +117,9 @@ jobs:
 #          docker_name: ${{ matrix.name }}
 #          REGISTRY_IMAGE: ghcr.io/novuhq/${{ matrix.name }}
 
-  merge:
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-    needs:
-      - deploy_dev_api
-      - get_version
-
   push_digest:
     needs: [deploy_dev_api, get_version]
-    uses: ./.github/workflows/push-git-tag.yml
+    uses: ./.github/workflows/push-digest.yml
     permissions:
       packages: write
     with:
