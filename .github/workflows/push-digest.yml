@@ -19,11 +19,18 @@ on:
         description: 'REGISTRY_IMAGE'
         required: false
         type: string
+      environment:
+        required: true
+        type: string
+      environment_short:
+        required: true
+        type: string
 
 jobs:
   merge_digest:
     runs-on: ubuntu-latest
     timeout-minutes: 80
+    environment: ${{ inputs.environment }}
     permissions:
       packages: write
       deployments: write
