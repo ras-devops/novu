@@ -1,20 +1,24 @@
 name: "Manifests merging"
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       docker_name:
         description: 'Name for docker image'
         required: false
+        type: string
       custom_tag:
         description: 'Image TAG'
         required: false
+        type: string
       github_token:
         description: 'The token to use for logging into ghcr.io'
         required: false
+        type: string
       REGISTRY_IMAGE:
         description: 'REGISTRY_IMAGE'
         required: false
+        type: string
 
 jobs:
   merge_digest:
