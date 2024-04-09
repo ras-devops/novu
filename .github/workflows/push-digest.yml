@@ -6,16 +6,16 @@ on:
     inputs:
       docker_name:
         description: 'Name for docker image'
-        required: true
+        required: false
       custom_tag:
         description: 'Image TAG'
-        required: true
+        required: false
       github_token:
         description: 'The token to use for logging into ghcr.io'
-        required: true
+        required: false
       REGISTRY_IMAGE:
         description: 'REGISTRY_IMAGE'
-        required: true
+        required: false
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:

@@ -71,3 +71,7 @@ ENV NEW_RELIC_NO_CONFIG_FILE=true
 WORKDIR /usr/src/app/apps/api
 CMD [ "pm2-runtime","start", "dist/main.js" ]
 
+
+
+
+
