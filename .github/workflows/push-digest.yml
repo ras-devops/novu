@@ -1,6 +1,5 @@
 name: "Manifests merging"
 
-# Controls when the action will run. Triggers the workflow on push or pull request
 on:
   workflow_call:
     inputs:
@@ -17,7 +16,6 @@ on:
         description: 'REGISTRY_IMAGE'
         required: false
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   merge_digest:
     runs-on: ubuntu-latest
@@ -27,18 +25,15 @@ jobs:
       deployments: write
       id-token: write
     steps:
-      -
-        name: Download digests
+      - name: Download digests
         uses: actions/download-artifact@v4
         with:
           path: /tmp/digests
           pattern: digests-*
           merge-multiple: true
-      -
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      -
-        name: Docker meta
+      - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         env:
@@ -47,21 +42,18 @@ jobs:
         with:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: ${{ env.IMAGE_TAG }}
-      -
-        name: Login To Registry
+      - name: Login To Registry
         shell: bash
         env:
           GH_ACTOR: ${{ github.actor }}
           GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
-      -
-        name: Echo DOCKER_METADATA_OUTPUT_JSON
+      - name: Echo DOCKER_METADATA_OUTPUT_JSON
         shell: bash
         run: |
           echo $DOCKER_METADATA_OUTPUT_JSON
-      -
-        name: Create manifest list and push
+      - name: Create manifest list and push
         working-directory: /tmp/digests
         env:
           IMAGE_TAG: ${{ inputs.custom_tag }}
@@ -69,8 +61,7 @@ jobs:
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
-      -
-        name: Inspect image
+      - name: Inspect image
         env:
           IMAGE_TAG: ${{ inputs.custom_tag }}
           REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }
