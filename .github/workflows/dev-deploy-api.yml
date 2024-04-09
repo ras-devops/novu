@@ -123,6 +123,7 @@ jobs:
       packages: write
     needs:
       - deploy_dev_api
+      - get_version
     steps:
       -
         name: Download digests
@@ -138,8 +139,11 @@ jobs:
         name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
+        env:
+          IMAGE_TAG: ${{ needs.get_version.outputs.env_tag }}
         with:
           images: ${{ env.REGISTRY_IMAGE }}
+          tags: ${{ env.IMAGE_TAG }}
       -
         name: Login To Registry
         shell: bash
