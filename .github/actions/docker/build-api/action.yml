@@ -70,10 +70,20 @@ runs:
       id: build
       uses: docker/build-push-action@v5
       with:
-        context: .
+        context: apps/api
         platforms: ${{ matrix.platform }}
         labels: ${{ steps.meta.outputs.labels }}
         outputs: type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true,push=true
+
+    -
+      name: Echo digest
+      run: |
+        digest="${{ steps.build.outputs.digest }}"
+        touch "/tmp/digests/${digest#sha256:}"
+        echo "------------------------------------------"
+        echo "${{ steps.build.outputs.digest }}"
+        ls -la /tmp/digests/
+
 
     - name: Build with Buildx, tag, and test
       shell: bash
