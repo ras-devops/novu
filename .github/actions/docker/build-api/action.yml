@@ -84,6 +84,7 @@ runs:
         set -x
         cd apps/api && REGISTRY_IMAGE=$REGISTRY_IMAGE pnpm run docker:build
         ls -la
+        docker tag REGISTRY_IMAGE=$REGISTRY_IMAGE novu-api
         cat metadata.json
 
     - name: Tag and test
