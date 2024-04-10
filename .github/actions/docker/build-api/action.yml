@@ -143,15 +143,15 @@ runs:
         echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
         mkdir -p /tmp/digests
         cd apps/api
-        echo "--------------------------------------"
-        cat image-id.txt
         image_id=$(cat image-id.txt)
-        digest=$(docker inspect --format='{{index .RepoDigests 0}}' "$image_id")
+        digest=$(jq -r '."containerimage.digest"' ./metadata.json)
         touch "/tmp/digests/${digest#ghcr.io/ras-devops/novu/api@sha256:}"
         ls -la /tmp/digests/
         echo "-----------------INSPECT------------------"
         docker inspect --format='{{index .RepoDigests 0}}' $(cat image-id.txt)
-        echo "-----------------CAT------------------"
+        echo "----------------- CAT METADATA JSON  ---------------------"
+        cat ./metadata.json
+        echo "----------------- CAT IMAGE ID ---------------------"
         cat image-id.txt
         echo "----------------- NEW Dicgest ------------------"
         echo $digest
