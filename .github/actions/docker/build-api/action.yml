@@ -137,6 +137,8 @@ runs:
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
         IMAGE_TAG: ${{ github.sha }}
+        REGISTRY_OWNER: ras-devops
+        DOCKER_NAME: ${{ inputs.docker_name }}
       run: |
         echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
         mkdir -p /tmp/digests
