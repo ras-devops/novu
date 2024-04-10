@@ -149,7 +149,7 @@ runs:
         echo "----------------- NEW Dicgest ------------------"
         echo $digest
         echo "----------------- Inspect ------------------"
-        docker manifest inspect ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:${{ inputs.tag }}
+        docker manifest inspect "ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:${{ inputs.tag }}"
 
     - name: Upload digest
       uses: actions/upload-artifact@v4
