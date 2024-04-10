@@ -149,7 +149,7 @@ runs:
         cd apps/api
         image_id=$(cat image-id.txt)
         digest=$(jq -r '."containerimage.digest"' ./metadata.json)
-        touch "/tmp/digests/${digest#ghcr.io/ras-devops/novu/api@sha256:}"
+        touch "/tmp/digests/${digest#sha256:}"
         ls -la /tmp/digests/
         echo "-----------------INSPECT------------------"
         docker inspect --format='{{index .RepoDigests 0}}' $(cat image-id.txt)
