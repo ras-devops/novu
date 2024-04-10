@@ -146,6 +146,8 @@ runs:
         docker inspect --format='{{index .RepoDigests 0}}' $(cat image-id.txt)
         echo "-----------------CAT------------------"
         cat image-id.txt
+        echo "----------------- NEW Dicgest ------------------"
+        echo $digest
 
     - name: Upload digest
       uses: actions/upload-artifact@v4
