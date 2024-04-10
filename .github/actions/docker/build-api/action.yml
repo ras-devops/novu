@@ -75,14 +75,18 @@ runs:
         GH_PASSWORD: ${{ inputs.github_token }}
         PLATFORM: ${{ matrix.platform }}
         REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
+        DOCKER_BUILD_ARGUMENTS: "--platform=${{ matrix.platform }}"
       run: |
         echo "PLATFORM=${{ matrix.platform }}" >> $GITHUB_ENV
+        echo "DOCKER_BUILD_ARGUMENTS=${{ env.DOCKER_BUILD_ARGUMENTS }}" >> $GITHUB_ENV
         echo $PLATFORM
         echo $REGISTRY_IMAGE
         export PLATFORM=$PLATFORM
         export REGISTRY_IMAGE=$REGISTRY_IMAGE
+        export DOCKER_BUILD_ARGUMENTS=$DOCKER_BUILD_ARGUMENTS
+        export
         set -x
-        cd apps/api && REGISTRY_IMAGE=$REGISTRY_IMAGE pnpm run docker:build
+        cd apps/api && pnpm run docker:build
         ls -la
         cat metadata.json
 
