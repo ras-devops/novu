@@ -10,7 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "precommit": "lint-staged",
-    "docker:build": "pnpm --silent --workspace-root pnpm-context -- apps/api/Dockerfile | REGISTRY_IMAGE=$REGISTRY_IMAGE docker buildx build --push --build-arg PACKAGE_PATH=apps/api - --metadata-file metadata.json --iidfile image-id.txt --output=type=image,name=$REGISTRY_IMAGE,push-by-digest=true,name-canonical=true",
+    "docker:build": "pnpm --silent --workspace-root pnpm-context -- apps/api/Dockerfile | REGISTRY_IMAGE=$REGISTRY_IMAGE docker buildx build --push -t novu-api --build-arg PACKAGE_PATH=apps/api - --metadata-file metadata.json --iidfile image-id.txt --output=type=image,name=novu-api,push-by-digest=true,name-canonical=true",
     "docker:build:depot": "pnpm --silent --workspace-root pnpm-context -- apps/api/Dockerfile | depot build --build-arg PACKAGE_PATH=apps/api - -t novu-api --load",
     "start": "pnpm start:dev",
     "start:dev": "cross-env TZ=UTC nest start --watch",
