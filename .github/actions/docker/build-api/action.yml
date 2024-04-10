@@ -133,7 +133,12 @@ runs:
 
     - name: Export digest
       shell: bash
+      env:
+        GH_ACTOR: ${{ github.actor }}
+        GH_PASSWORD: ${{ inputs.github_token }}
+        IMAGE_TAG: ${{ github.sha }}
       run: |
+        echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
         mkdir -p /tmp/digests
         cd apps/api
         echo "--------------------------------------"
@@ -149,7 +154,7 @@ runs:
         echo "----------------- NEW Dicgest ------------------"
         echo $digest
         echo "----------------- Inspect ------------------"
-        docker manifest inspect "$image_id"
+        docker manifest inspect ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
 
     - name: Upload digest
       uses: actions/upload-artifact@v4
