@@ -82,7 +82,7 @@ runs:
         export PLATFORM=$PLATFORM
         export REGISTRY_IMAGE=$REGISTRY_IMAGE
         set -x
-        cd apps/api && pnpm run docker:build
+        cd apps/api && REGISTRY_IMAGE=$REGISTRY_IMAGE pnpm run docker:build
         ls -la
         cat metadata.json
 
