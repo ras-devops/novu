@@ -48,13 +48,13 @@ jobs:
     strategy:
       matrix:
         name: ['novu/api']
-        os: [ubuntu-latest, macos-13]
+        os: [ubuntu-latest, macos-11]
         include:
           - os: ubuntu-latest
             skip_redis_mongodb: false
-          - os: macos-13
+          - os: macos-11
             skip_redis_mongodb: true
-          - os: macos-13
+          - os: macos-11
             skip_clean_space: true
 
     steps:
