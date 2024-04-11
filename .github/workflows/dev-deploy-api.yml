@@ -118,5 +118,5 @@ jobs:
     with:
       environment: Development
       environment_short: dev
-      custom_tag: ${{ needs.get_version.outputs.env_tag }}
+      custom_tag: ${{ needs.get_version.outputs.sha }}
       REGISTRY_IMAGE: ghcr.io/ras-devops/novu/api
