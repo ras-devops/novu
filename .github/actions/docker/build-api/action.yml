@@ -103,7 +103,6 @@ runs:
       run: |
         echo "Built image"
         docker tag novu-api ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
-        docker tag novu-api ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG-${{ env.PLATFORM_PAIR }}
 
         docker run --network=host --name api -dit --env NODE_ENV=test ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
         echo "IMAGE=ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG" >> $GITHUB_OUTPUT
@@ -127,7 +126,6 @@ runs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         docker push ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
-        docker push ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG-${{ env.PLATFORM_PAIR }}
 
     - name: Push custom tag image
       if: ${{ inputs.push == 'true' && inputs.tag }}
