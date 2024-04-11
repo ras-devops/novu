@@ -40,8 +40,10 @@ jobs:
           path: /tmp/digests
           pattern: digests-*
           merge-multiple: true
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -51,6 +53,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: ${{ env.IMAGE_TAG }}
+
       - name: Login To Registry
         shell: bash
         env:
@@ -58,21 +61,42 @@ jobs:
           GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
+
       - name: Echo DOCKER_METADATA_OUTPUT_JSON
         shell: bash
         run: |
           echo $DOCKER_METADATA_OUTPUT_JSON
+
+      - name: Create manifest
+        working-directory: /tmp/digests
+        env:
+          IMAGE_TAG: ${{ inputs.custom_tag }}
+          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}  # Corrected line
+        run: |
+          docker manifest create ${{ env.REGISTRY_IMAGE }}:${{ inputs.custom_tag }} \
+              ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}-linux-arm64 \
+              ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}-linux-amd64
+
       - name: Create manifest list and push
         working-directory: /tmp/digests
         env:
           IMAGE_TAG: ${{ inputs.custom_tag }}
           REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}  # Corrected line
         run: |
-          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
-      - name: Inspect image
-        env:
-          IMAGE_TAG: ${{ inputs.custom_tag }}
-          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}
-        run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}
+          docker push ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}
+
+#      - name: Create manifest list and push
+#        working-directory: /tmp/digests
+#        env:
+#          IMAGE_TAG: ${{ inputs.custom_tag }}
+#          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}  # Corrected line
+#        run: |
+#          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+#            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+#
+#      - name: Inspect image
+#        env:
+#          IMAGE_TAG: ${{ inputs.custom_tag }}
+#          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}
+#        run: |
+#          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}
