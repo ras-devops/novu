@@ -60,10 +60,7 @@ jobs:
             skip: true
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Docker
-        uses: crazy-max/ghaction-setup-docker@v3
+      - uses: actions/checkout@v4
 
       - name: Echo image to output
         id: Echo-image

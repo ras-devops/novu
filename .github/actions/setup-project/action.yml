@@ -81,6 +81,10 @@ runs:
       shell: bash
       run: pnpm i -g wait-on
 
+    - name: Set up Docker
+      if: runner.os == 'macos'
+      uses: crazy-max/ghaction-setup-docker@v3
+
 #    - name: Setup docker (missing on MacOS)
 #      shell: bash
 #      if: runner.os == 'macos'
