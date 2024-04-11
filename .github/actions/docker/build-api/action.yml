@@ -48,8 +48,15 @@ runs:
     - name: Prepare
       shell: bash
       run: |
-        platform=${{ matrix.platform }}
-        echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+          platform=linux/arm64
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+          echo "platform=$platform" >> $GITHUB_ENV
+        else
+          platform=linux/amd64
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+          echo "platform=$platform" >> $GITHUB_ENV
+        fi
 
     - name: Login To Registry
       shell: bash
@@ -73,11 +80,11 @@ runs:
         IMAGE_TAG: ${{ github.sha }}
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
-        PLATFORM: ${{ matrix.platform }}
+        PLATFORM: ${{ env.platform }}
         REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
-        DOCKER_BUILD_ARGUMENTS: "--metadata-file metadata.json --iidfile image-id.txt --platform=${{ matrix.platform }} --output=type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true"
+        DOCKER_BUILD_ARGUMENTS: "--metadata-file metadata.json --iidfile image-id.txt --output=type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true"
       run: |
-        echo "PLATFORM=${{ matrix.platform }}" >> $GITHUB_ENV
+        echo "PLATFORM=${{ env.platform }}" >> $GITHUB_ENV
         echo "DOCKER_BUILD_ARGUMENTS=${{ env.DOCKER_BUILD_ARGUMENTS }}" >> $GITHUB_ENV
         echo $PLATFORM
         echo $REGISTRY_IMAGE
@@ -99,7 +106,7 @@ runs:
         IMAGE_TAG: ${{ github.sha }}
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
-        PLATFORM: ${{ matrix.platform }}
+        PLATFORM: ${{ env.platform }}
       run: |
         echo "Built image"
         docker tag novu-api ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
