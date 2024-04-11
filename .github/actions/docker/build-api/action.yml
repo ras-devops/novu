@@ -40,6 +40,9 @@ runs:
     # TODO Removed when migrated to action matrix for each build type
     - uses: ./.github/actions/free-space
 
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
     - name: Set Up Docker Buildx
       uses: docker/setup-buildx-action@v3
       with:
@@ -75,7 +78,7 @@ runs:
         GH_PASSWORD: ${{ inputs.github_token }}
         PLATFORM: ${{ matrix.platform }}
         REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
-        DOCKER_BUILD_ARGUMENTS: "--metadata-file metadata.json --iidfile image-id.txt --output=type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true"
+        DOCKER_BUILD_ARGUMENTS: "--metadata-file metadata.json --iidfile image-id.txt --platform=${{ matrix.platform }} --output=type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true"
       run: |
         echo "PLATFORM=${{ matrix.platform }}" >> $GITHUB_ENV
         echo "DOCKER_BUILD_ARGUMENTS=${{ env.DOCKER_BUILD_ARGUMENTS }}" >> $GITHUB_ENV
