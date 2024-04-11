@@ -73,17 +73,12 @@ jobs:
           IMAGE_TAG: ${{ inputs.custom_tag }}
           REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}  # Corrected line
         run: |
+          docker pull ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}-linux-arm64
+          docker pull ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}-linux-amd64
           docker manifest create ${{ env.REGISTRY_IMAGE }}:${{ inputs.custom_tag }} \
               ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}-linux-arm64 \
               ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}-linux-amd64
-
-      - name: Create manifest list and push
-        working-directory: /tmp/digests
-        env:
-          IMAGE_TAG: ${{ inputs.custom_tag }}
-          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}  # Corrected line
-        run: |
-          docker push ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}
+          docker push ${{ env.REGISTRY_IMAGE }}:${{ inputs.custom_tag }}
 
 #      - name: Create manifest list and push
 #        working-directory: /tmp/digests
