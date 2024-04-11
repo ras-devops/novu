@@ -54,6 +54,8 @@ jobs:
             skip_redis_mongodb: false
           - os: macos-13
             skip_redis_mongodb: true
+          - os: macos-13
+            skip_clean_space: true
 
     steps:
       - uses: actions/checkout@v3

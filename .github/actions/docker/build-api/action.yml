@@ -39,6 +39,7 @@ runs:
 
     # TODO Removed when migrated to action matrix for each build type
     - uses: ./.github/actions/free-space
+      if: ${{ matrix.skip_clean_space == false }}
 
     - name: Set Up Docker Buildx
       uses: docker/setup-buildx-action@v3
