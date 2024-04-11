@@ -75,7 +75,7 @@ runs:
         GH_PASSWORD: ${{ inputs.github_token }}
         PLATFORM: ${{ matrix.platform }}
         REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
-        DOCKER_BUILD_ARGUMENTS: "--metadata-file metadata.json --iidfile image-id.txt --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true,push=true --platform=${{ matrix.platform }}"
+        DOCKER_BUILD_ARGUMENTS: "--metadata-file metadata.json --iidfile image-id.txt"
       run: |
         echo "PLATFORM=${{ matrix.platform }}" >> $GITHUB_ENV
         echo "DOCKER_BUILD_ARGUMENTS=${{ env.DOCKER_BUILD_ARGUMENTS }}" >> $GITHUB_ENV
@@ -101,7 +101,7 @@ runs:
         GH_PASSWORD: ${{ inputs.github_token }}
       run: |
         echo "Built image"
-#        docker tag novu-api ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
+        docker tag novu-api ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
 
         docker run --network=host --name api -dit --env NODE_ENV=test ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
         echo "IMAGE=ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG" >> $GITHUB_OUTPUT
@@ -134,6 +134,16 @@ runs:
         DOCKER_NAME: ${{ inputs.docker_name }}
       run: |
         docker push ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:${{ inputs.tag }}
+
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v5
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+        REGISTRY_IMAGE: ghcr.io/ras-devops/${{ inputs.docker_name }}:${{ github.sha }}
+      with:
+        images: ${{ env.REGISTRY_IMAGE }}
+        tags: ${{ env.IMAGE_TAG }}
 
     - name: Export digest
       shell: bash
