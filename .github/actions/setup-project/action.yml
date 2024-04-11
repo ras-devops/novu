@@ -83,6 +83,7 @@ runs:
 
     - name: Setup docker (missing on MacOS)
       if: runner.os == 'macos'
+      shell: bash
       run: |
         brew install docker
         colima start
