@@ -74,8 +74,6 @@ jobs:
           echo "SHA = $SHA"
           echo "RELEASE_VERSION=${{ github.ref_name }}"
           echo "$RELEASE_VERSION"
-          docker --help || true
-          docker buildx || true
 
       - uses: ./.github/actions/setup-project
 

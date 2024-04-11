@@ -34,6 +34,16 @@ runs:
           sudo sysctl -p
         fi
 
+    - name: Set up Docker
+      if: runner.os == 'macos'
+      uses: crazy-max/ghaction-setup-docker@v3
+
+    - name: Docker chack
+      shell: bash
+      run: |
+        docker --help || true
+        docker buildx || true
+
     - uses: pnpm/action-setup@v2
 
     - uses: actions/setup-node@v3
