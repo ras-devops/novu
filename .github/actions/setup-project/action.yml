@@ -25,9 +25,14 @@ runs:
   steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: ⚙️ Setup kernel for react native, increase watchers
-      if:
-      shell: bash
-      run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+      run: |
+        echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+          sudo launchctl limit maxfiles unlimited unlimited
+        else
+          sudo sysctl -p
+        fi
+
     - uses: pnpm/action-setup@v2
 
     - uses: actions/setup-node@v3
