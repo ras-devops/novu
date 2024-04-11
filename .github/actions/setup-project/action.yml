@@ -81,9 +81,9 @@ runs:
       shell: bash
       run: pnpm i -g wait-on
 
-    - name: Setup docker (missing on MacOS)
-      shell: bash
-      if: runner.os == 'macos'
-      run: |
-        brew install docker colima
-        colima start
+#    - name: Setup docker (missing on MacOS)
+#      shell: bash
+#      if: runner.os == 'macos'
+#      run: |
+#        brew install docker colima
+#        colima start
