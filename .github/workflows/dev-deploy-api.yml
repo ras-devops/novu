@@ -48,7 +48,7 @@ jobs:
     strategy:
       matrix:
 #        name: ['novu/api-ee', 'novu/api']
-        name: ['novu/api']
+        name: ['novu/api', 'novu/api-kk']
         platform:
           - linux/amd64
           - linux/arm64
