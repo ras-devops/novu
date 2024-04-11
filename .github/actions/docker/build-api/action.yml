@@ -162,16 +162,16 @@ runs:
         digest=$(jq -r '."containerimage.digest"' ./metadata.json)
         touch "/tmp/digests/${digest#sha256:}"
         ls -la /tmp/digests/
-        echo "-----------------INSPECT------------------"
-        docker inspect --format='{{index .RepoDigests 0}}' $(cat image-id.txt)
         echo "----------------- CAT METADATA JSON  ---------------------"
         cat ./metadata.json
         echo "----------------- CAT IMAGE ID ---------------------"
         cat image-id.txt
         echo "----------------- NEW Dicgest ------------------"
         echo $digest
-        echo "----------------- Inspect ------------------"
-        docker manifest inspect ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
+#        echo "----------------- Inspect ------------------"
+#        docker manifest inspect ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
+#        echo "-----------------INSPECT------------------"
+#        docker inspect --format='{{index .RepoDigests 0}}' $(cat image-id.txt)
 
     - name: Upload digest
       uses: actions/upload-artifact@v4
