@@ -181,8 +181,8 @@ runs:
         cat image-id.txt
         echo "----------------- NEW Dicgest ------------------"
         echo $digest
-        echo "----------------- Inspect ------------------"
-        docker manifest inspect novu-api:latest
+#        echo "----------------- Inspect ------------------"
+#        docker manifest inspect novu-api:latest
 #        echo "-----------------INSPECT------------------"
 #        docker inspect --format='{{index .RepoDigests 0}}' $(cat image-id.txt)
 
