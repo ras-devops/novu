@@ -51,11 +51,13 @@ runs:
 
     - uses: pnpm/action-setup@v2
 
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       name: ⚙️ Setup Node Version
       with:
         node-version: '16.15.1'
         cache: 'pnpm'
+        cache-dependency-path: |
+          apps/api/package-lock.json
 
     - name: 💵 Start Redis
       if: ${{ inputs.slim == 'false' && matrix.skip_redis_mongodb == false }}
