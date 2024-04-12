@@ -80,7 +80,7 @@ runs:
         GH_PASSWORD: ${{ inputs.github_token }}
         PLATFORM: ${{ matrix.platform }}
         REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
-        DOCKER_BUILD_ARGUMENTS: "--metadata-file metadata.json --iidfile image-id.txt --platform=${{ matrix.platform }} --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
+        DOCKER_BUILD_ARGUMENTS: "--cache-from type=local,src=$GITHUB_WORKSPACE/cache --cache-to type=local,dest=$GITHUB_WORKSPACE/cache --metadata-file metadata.json --iidfile image-id.txt --platform=${{ matrix.platform }} --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true,push=true"
       run: |
         echo "PLATFORM=${{ matrix.platform }}" >> $GITHUB_ENV
         echo "DOCKER_BUILD_ARGUMENTS=${{ env.DOCKER_BUILD_ARGUMENTS }}" >> $GITHUB_ENV
@@ -173,8 +173,8 @@ runs:
         cat image-id.txt
         echo "----------------- NEW Dicgest ------------------"
         echo $digest
-#        echo "----------------- Inspect ------------------"
-#        docker manifest inspect ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
+        echo "----------------- Inspect ------------------"
+        docker manifest inspect novu-api:latest
 #        echo "-----------------INSPECT------------------"
 #        docker inspect --format='{{index .RepoDigests 0}}' $(cat image-id.txt)
 
