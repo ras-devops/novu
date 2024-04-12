@@ -6,23 +6,28 @@ inputs:
   tag:
     description: 'The tag to use for the image'
     required: false
+    type: string
   push:
     description: 'Push the image to the registry'
     required: false
     default: 'false'
+    type: string
   github_token:
     description: 'The token to use for logging into ghcr.io'
     required: true
+    type: string
   fork:
     description: 'Whether this is being triggered from a forked repo'
     required: false
+    type: string
     default: 'true'
   docker_name:
     description: 'Name for docker image'
+    type: string
     required: true
-
   bullmq_secret:
     description: 'Bullmq secret api token'
+    type: string
     required: true
 
 outputs:
