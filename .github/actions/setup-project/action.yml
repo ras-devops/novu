@@ -42,7 +42,7 @@ runs:
       shell: bash
       if: runner.os == 'macos'
       run: |
-        brew install docker docker-buildx colima
+        brew install docker docker-buildx@0.13.1 colima
         colima start
         docker buildx version
 
@@ -59,7 +59,6 @@ runs:
       with:
         node-version: '16.15.1'
         cache: 'pnpm'
-        cache-dependency-path: ./package-lock.json
 
     - name: 💵 Start Redis
       if: ${{ inputs.slim == 'false' && matrix.skip_redis_mongodb == false }}
