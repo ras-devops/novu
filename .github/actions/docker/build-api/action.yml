@@ -73,6 +73,21 @@ runs:
         echo "BULL_MQ_PRO_NPM_TOKEN=gug4aim0vat7aefo0ood4iux4oej1Zaa" >> $GITHUB_ENV
       if: contains( inputs.docker_name  , 'ee')
 
+    - name: cache docker cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.workspace }}/cache
+        key: ${{ runner.os }}-docker-${{ hashfiles('cache/**') }}
+        restore-keys: |
+          ${{ runner.os }}-docker-
+    - name: build docker image
+      run: >
+        docker buildx build
+        --cache-from "type=local,src=$GITHUB_WORKSPACE/cache"
+        --cache-to "type=local,dest=$GITHUB_WORKSPACE/cache"
+        --output "type=image, name=your_image:CI,push=false"
+
+
     - name: Build with Buildx, tag, and test
       shell: bash
       env:
@@ -83,7 +98,8 @@ runs:
         GH_PASSWORD: ${{ inputs.github_token }}
         PLATFORM: ${{ env.platform }}
         REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
-        DOCKER_BUILD_ARGUMENTS: "--cache-from ghcr.io/ras-devops/novu/cache:next --cache-to type=gha,ref=ghcr.io/ras-devops/novu/cache:next,mode=max --metadata-file metadata.json --iidfile image-id.txt --output=type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true"
+#        DOCKER_BUILD_ARGUMENTS: "--cache-from ghcr.io/ras-devops/novu/cache:next --cache-to type=gha,ref=ghcr.io/ras-devops/novu/cache:next,mode=max --metadata-file metadata.json --iidfile image-id.txt --output=type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true"
+        DOCKER_BUILD_ARGUMENTS: "--cache-from type=local,src=$GITHUB_WORKSPACE/cache --cache-to "type=local,dest=$GITHUB_WORKSPACE/cache --output "type=image, name=${{ inputs.docker_name }}:CI,push=false" --metadata-file metadata.json --iidfile image-id.txt --output=type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true"
       run: |
         echo "PLATFORM=${{ env.platform }}" >> $GITHUB_ENV
         echo "DOCKER_BUILD_ARGUMENTS=${{ env.DOCKER_BUILD_ARGUMENTS }}" >> $GITHUB_ENV
