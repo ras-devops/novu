@@ -99,7 +99,7 @@ runs:
         GH_PASSWORD: ${{ inputs.github_token }}
         PLATFORM: ${{ env.platform }}
         REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
-        DOCKER_BUILD_ARGUMENTS: "--cache-from type=local,src=$GITHUB_WORKSPACE/cache --cache-to type=local,dest=$GITHUB_WORKSPACE/cache --output type=image, name=${{ inputs.docker_name }}:CI,push=false --metadata-file metadata.json --iidfile image-id.txt --output=type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true"
+        DOCKER_BUILD_ARGUMENTS: "--cache-from type=local,src=$GITHUB_WORKSPACE/cache --cache-to "type=local,dest=$GITHUB_WORKSPACE/cache --output "type=image, name=${{ inputs.docker_name }}:CI,push=false" --metadata-file metadata.json --platform=linux/amd64,linux/arm64 --provenance=false --iidfile image-id.txt --output=type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true"
       run: |
         echo "PLATFORM=${{ env.platform }}" >> $GITHUB_ENV
         echo "DOCKER_BUILD_ARGUMENTS=${{ env.DOCKER_BUILD_ARGUMENTS }}" >> $GITHUB_ENV
