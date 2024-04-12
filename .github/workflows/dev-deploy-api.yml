@@ -49,9 +49,11 @@ jobs:
       matrix:
 #        name: ['novu/api-ee', 'novu/api']
         name: ['novu/api']
+        platform:
+          - linux/amd64
+          - linux/arm64
     steps:
       - uses: actions/checkout@v3
-
 
       - name: Echo image to output
         id: Echo-image
@@ -76,3 +78,14 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           docker_name: ${{ matrix.name }}
           bullmq_secret: ${{ secrets.BULL_MQ_PRO_NPM_TOKEN }}
+
+  push_digest:
+    needs: [deploy_dev_api, get_version]
+    uses: ./.github/workflows/push-digest.yml
+    permissions:
+      packages: write
+    with:
+      environment: Development
+      environment_short: dev
+      custom_tag: ${{ needs.get_version.outputs.env_tag }}
+      REGISTRY_IMAGE: ${{ env.REGISTRY_IMAGE }}
