@@ -31,12 +31,12 @@ jobs:
   test_api:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
   deploy_dev_api:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     needs: [get_version, test_api]
     timeout-minutes: 80
     environment: Development
@@ -47,14 +47,20 @@ jobs:
       id-token: write
     strategy:
       matrix:
-#        name: ['novu/api-ee', 'novu/api']
         name: ['novu/api']
-        platform:
-          - linux/amd64
-          - linux/arm64
-    steps:
-      - uses: actions/checkout@v3
+        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            skip_redis_mongodb: false
+          - os: macos-latest
+            skip_redis_mongodb: true
+          - os: macos-latest
+            skip_clean_space: true
+          - os: macos-latest
+            skip: true
 
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Echo image to output
         id: Echo-image
@@ -88,5 +94,5 @@ jobs:
     with:
       environment: Development
       environment_short: dev
-      custom_tag: ${{ needs.get_version.outputs.env_tag }}
-      REGISTRY_IMAGE: ${{ env.REGISTRY_IMAGE }}
+      custom_tag: ${{ needs.get_version.outputs.sha }}
+      REGISTRY_IMAGE: ghcr.io/ras-devops/novu/api

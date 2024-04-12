@@ -34,9 +34,24 @@ runs:
           sudo sysctl -p
         fi
 
-    - uses: pnpm/action-setup@v3
+#    - name: Set up Docker
+#      if: runner.os == 'macos'
+#      uses: crazy-max/ghaction-setup-docker@v3
 
-    - uses: actions/setup-node@v3
+    - name: Setup docker (missing on MacOS)
+      shell: bash
+      if: runner.os == 'macos'
+      run: |
+        brew install docker docker-buildx colima
+        colima start
+        echo ---------------------- Docker Versions ----------------------------------
+        docker version
+        docker buildx version
+        echo --------------------------------------------------------------------
+
+    - uses: pnpm/action-setup@v2
+
+    - uses: actions/setup-node@v4
       name: ⚙️ Setup Node Version
       with:
         node-version: '16.15.1'
@@ -67,19 +82,6 @@ runs:
       with:
         path: /home/runner/.cache/Cypress
         key: cypress-binary-${{ hashFiles('**/pnpm-lock.yaml') }}
-
-    - name: Get pnpm store directory
-      shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-    - uses: actions/cache@v4
-      name: Setup pnpm cache
-      with:
-        path: ${{ env.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
 
     - name: 🛟 Install dependencies
       shell: bash
