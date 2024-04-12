@@ -38,7 +38,7 @@ runs:
       if: runner.os == 'macos'
       uses: crazy-max/ghaction-setup-docker@v3
 
-    - name: Docker chack
+    - name: Docker check
       shell: bash
       run: |
         docker --help || true
