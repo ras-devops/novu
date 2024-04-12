@@ -42,7 +42,7 @@ runs:
       shell: bash
       if: runner.os == 'macos'
       run: |
-        brew install docker colima
+        brew install docker docker-buildx colima
         colima start
 
     - name: Docker check
