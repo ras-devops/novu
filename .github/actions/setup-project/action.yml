@@ -56,8 +56,6 @@ runs:
       with:
         node-version: '16.15.1'
         cache: 'pnpm'
-        cache-dependency-path: |
-          apps/api/package-lock.json
 
     - name: 💵 Start Redis
       if: ${{ inputs.slim == 'false' && matrix.skip_redis_mongodb == false }}
