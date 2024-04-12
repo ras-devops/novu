@@ -34,7 +34,7 @@ WORKDIR /usr/src/app/apps/api
 
 RUN cp src/.example.env dist/src/.env
 RUN cp src/.env.test dist/src/.env.test
-RUN cp src/.env.development dist/src/.env.development--config.platform=linux --config.architecture=x64
+RUN cp src/.env.development dist/src/.env.development
 RUN cp src/.env.production dist/src/.env.production
 
 WORKDIR /usr/src/app
