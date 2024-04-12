@@ -72,3 +72,10 @@ WORKDIR /usr/src/app/apps/api
 CMD [ "pm2-runtime","start", "dist/main.js" ]
 
 
+
+
+
+
+
+
+
