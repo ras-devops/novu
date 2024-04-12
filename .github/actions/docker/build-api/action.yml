@@ -75,7 +75,6 @@ runs:
 
     - name: cache docker cache
       uses: actions/cache@v4
-      shell: bash
       with:
         path: ${{ github.workspace }}/cache
         key: ${{ runner.os }}-docker-${{ hashfiles('cache/**') }}
