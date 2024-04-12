@@ -34,9 +34,16 @@ runs:
           sudo sysctl -p
         fi
 
-    - name: Set up Docker
+#    - name: Set up Docker
+#      if: runner.os == 'macos'
+#      uses: crazy-max/ghaction-setup-docker@v3
+
+    - name: Setup docker (missing on MacOS)
+      shell: bash
       if: runner.os == 'macos'
-      uses: crazy-max/ghaction-setup-docker@v3
+      run: |
+        brew install docker colima
+        colima start
 
     - name: Docker check
       shell: bash
@@ -110,10 +117,3 @@ runs:
     - name: Install wait-on plugin
       shell: bash
       run: pnpm i -g wait-on
-
-#    - name: Setup docker (missing on MacOS)
-#      shell: bash
-#      if: runner.os == 'macos'
-#      run: |
-#        brew install docker colima
-#        colima start
