@@ -44,13 +44,10 @@ runs:
       run: |
         brew install docker docker-buildx colima
         colima start
+        echo ---------------------- Docker Versions ----------------------------------
+        docker version
         docker buildx version
-
-    - name: Docker check
-      shell: bash
-      run: |
-        docker --help || true
-        docker buildx || true
+        echo --------------------------------------------------------------------
 
     - uses: pnpm/action-setup@v2
 
