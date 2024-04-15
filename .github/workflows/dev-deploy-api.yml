@@ -47,8 +47,8 @@ jobs:
       id-token: write
     strategy:
       matrix:
-#        name: ['novu/api-ee', 'novu/api']
-        name: ['novu/api']
+        name: ['novu/api-rr', 'novu/api']
+#        name: ['novu/api']
         platform:
           - linux/amd64
           - linux/arm64
