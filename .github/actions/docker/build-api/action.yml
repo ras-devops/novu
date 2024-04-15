@@ -172,7 +172,7 @@ runs:
         mkdir -p /tmp/digests
         cd apps/api
         image_id=$(cat image-id.txt)
-        digest=$(jq -r '."containerimage.config.digest"' ./metadata.json)
+        digest=$(jq -r '."containerimage.digest"' ./metadata.json)
         touch "/tmp/digests/${digest#sha256:}"
         ls -la /tmp/digests/
         echo "----------------- CAT METADATA JSON  ---------------------"
