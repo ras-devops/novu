@@ -166,7 +166,7 @@ runs:
         cd apps/api
         image_id=$(cat image-id.txt)
         digest=$(docker inspect --format='{{index .RepoDigests 0}}' "$image_id")
-        touch "/tmp/digests/${digest#ghcr.io/ras-devops/novu/api@sha256:}"
+        touch "/tmp/digests/$(echo "$digest" | awk -F'@sha256:' '{print $2}')"
         ls -la /tmp/digests/
         echo "----------------- CAT METADATA JSON  ---------------------"
         cat ./metadata.json
