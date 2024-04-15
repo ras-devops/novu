@@ -84,8 +84,11 @@ jobs:
     uses: ./.github/workflows/push-digest.yml
     permissions:
       packages: write
+    strategy:
+      matrix:
+        name: ['novu/api-rr', 'novu/api']
     with:
       environment: Development
       environment_short: dev
       custom_tag: ${{ needs.get_version.outputs.env_tag }}
-      REGISTRY_IMAGE: ghcr.io/ras-devops/novu/api
+      REGISTRY_IMAGE: ghcr.io/ras-devops/novu/${{ matrix.name }}

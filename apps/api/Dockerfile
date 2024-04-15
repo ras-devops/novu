@@ -1,5 +1,5 @@
 FROM node:20-alpine3.19 as dev_base
-RUN apk add g++ make py3-pip
+RUN apk add g++ make py3-pip curl
 
 ARG BULL_MQ_PRO_TOKEN
 ENV BULL_MQ_PRO_NPM_TOKEN=$BULL_MQ_PRO_TOKEN
