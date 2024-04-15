@@ -1,0 +1,11 @@
+name: Cache
+description: This action addes chache
+runs:
+  using: composite
+  steps:
+    - name: Expose GitHub Runtime
+      uses: crazy-max/ghaction-github-runtime@v3
+    - name: Env
+      run: |
+        env|sort
+
