@@ -6,6 +6,7 @@ runs:
     - name: Expose GitHub Runtime
       uses: crazy-max/ghaction-github-runtime@v3
     - name: Env
+      shell: bash
       run: |
         env|sort
 
