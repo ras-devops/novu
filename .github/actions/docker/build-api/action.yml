@@ -90,8 +90,8 @@ runs:
         PLATFORM: ${{ matrix.platform }}
         REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
         DOCKER_BUILD_ARGUMENTS: |
-          --cache-to type=gha,url=${{ env.REGISTRY_IMAGE }}-${{ matrix.platform }},scope=${{ matrix.platform }}
-          --cache-from type=gha,url=${{ env.REGISTRY_IMAGE }}-${{ matrix.platform }},scope=${{ matrix.platform }}
+          --cache-to type=gha,url=ghcr.io/ras-devops/cache,scope=${{ env.DOCKER_NAME }}-${{ matrix.platform }}
+          --cache-from type=gha,url=ghcr.io/ras-devops/cache,scope=${{ env.DOCKER_NAME }}-${{ matrix.platform }}
           --metadata-file metadata.json
           --iidfile image-id.txt
           --platform=${{ matrix.platform }}
