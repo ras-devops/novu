@@ -41,7 +41,7 @@ jobs:
           platform=${{ matrix.platform }}
           service=${{ matrix.name }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
-          echo "SERVICE_NAME=$(basename "${service//-/_}")" >> "$GITHUB_OUTPUT
+          echo "SERVICE_NAME=$(basename "${service//-/_}")" >> $GITHUB_OUTPUT
 
       - name: Download digests
         uses: actions/download-artifact@v4
