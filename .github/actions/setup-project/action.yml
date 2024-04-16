@@ -36,7 +36,7 @@ runs:
 
     - uses: pnpm/action-setup@v3
 
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       name: ⚙️ Setup Node Version
       with:
         node-version: '16.15.1'
@@ -55,7 +55,7 @@ runs:
     - name: Cache Cypress Binary For Version
       id: cache-cypress-binary-version
       if: ${{ inputs.cypress_version != '' }}
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: /home/runner/.cache/Cypress/${{ inputs.cypress_version }}
         key: cypress-binary-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ inputs.cypress_version }}
@@ -63,7 +63,7 @@ runs:
     - name: Cache Cypress Binary
       id: cache-cypress-binary
       if: ${{ inputs.cypress_version == '' }}
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: /home/runner/.cache/Cypress
         key: cypress-binary-${{ hashFiles('**/pnpm-lock.yaml') }}
