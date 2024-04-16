@@ -85,7 +85,7 @@ runs:
       if: runner.os == 'macos'
       shell: bash
       run: |
-        brew install docker
+        brew install docker colima docker-buildx
         colima start
 
     - name: 🛟 Install dependencies
