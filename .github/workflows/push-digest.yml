@@ -40,7 +40,7 @@ jobs:
         run: |
           export service=${{ inputs.service_name }}
           echo "SERVICE_NAME=$(basename "${service//-/_}")" >> $GITHUB_OUTPUT
-          echo $SERVICE_NAME
+          echo "$SERVICE_NAME"
 
       - name: Download digests
         uses: actions/download-artifact@v4
