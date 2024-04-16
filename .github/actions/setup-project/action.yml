@@ -43,11 +43,11 @@ runs:
         cache: 'pnpm'
 
     - name: 💵 Start Redis
-      if: ${{ inputs.slim == 'false' && matrix.skip_redis_mongodb == false }}
+      if: ${{ inputs.slim == 'false' && runner.os == 'macos' }}
       uses: supercharge/redis-github-action@1.5.0
 
     - name: 📚 Start MongoDB
-      if: ${{ inputs.slim == 'false' && matrix.skip_redis_mongodb == false }}
+      if: ${{ inputs.slim == 'false' && runner.os == 'macos' }}
       uses: supercharge/mongodb-github-action@v1.9.0
       with:
         mongodb-version: 4.2.8
