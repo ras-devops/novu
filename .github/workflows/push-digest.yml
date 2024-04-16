@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: |
           export service=${{ inputs.service_name }}
-          echo "SERVICE_NAME=$(basename "${service}")" >> $GITHUB_ENV
+          echo "SERVICE_NAME=$(basename "${service//-/-}")" >> $GITHUB_OUTPUT
           echo "$SERVICE_NAME"
 
       - name: Download digests
