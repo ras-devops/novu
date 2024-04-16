@@ -3,8 +3,8 @@ name: "Manifests merging"
 on:
   workflow_call:
     inputs:
-      docker_name:
-        description: 'Name for docker image'
+      service_name:
+        description: 'Name for service'
         required: false
         type: string
       custom_tag:
@@ -38,9 +38,7 @@ jobs:
         id: env-prepare
         shell: bash
         run: |
-          platform=${{ matrix.platform }}
-          service=${{ matrix.name }}
-          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+          export service=${{ inputs.service_name }}
           echo "SERVICE_NAME=$(basename "${service//-/_}")" >> $GITHUB_OUTPUT
           echo $SERVICE_NAME
 

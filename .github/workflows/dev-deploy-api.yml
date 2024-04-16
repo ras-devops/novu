@@ -90,5 +90,6 @@ jobs:
     with:
       environment: Development
       environment_short: dev
+      service_name: ${{ matrix.name }}
       custom_tag: ${{ needs.get_version.outputs.env_tag }}
       REGISTRY_IMAGE: ghcr.io/ras-devops/novu/${{ matrix.name }}
