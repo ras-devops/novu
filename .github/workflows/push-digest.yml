@@ -46,7 +46,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: /tmp/digests
-          pattern: digests-${{ steps.env-prepare.outputs.SERVICE_NAME }}-*
+          pattern: ${{ steps.env-prepare.outputs.SERVICE_NAME }}-digests-*
           merge-multiple: true
 
       - name: Set up Docker Buildx
