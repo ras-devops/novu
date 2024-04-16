@@ -35,18 +35,21 @@ jobs:
       packages: write
     steps:
       - name: Prepare
+        id: env-prepare
         shell: bash
         run: |
           platform=${{ matrix.platform }}
           service=${{ matrix.name }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
-          echo "SERVICE_NAME=$(basename "${service//-/_}")" >> $GITHUB_ENV
+          echo "SERVICE_NAME=$(basename "${service//-/_}")" >> "$GITHUB_OUTPUT
 
       - name: Download digests
         uses: actions/download-artifact@v4
+        env:
+          SERVICE_NAME: ${{ steps.env-prepare.outputs.SERVICE_NAME }}
         with:
           path: /tmp/digests
-          pattern: digests-${{ env.SERVICE_NAME }}-*
+          pattern: "digests-$SERVICE_NAME-*"
           merge-multiple: true
 
       - name: Set up Docker Buildx
