@@ -42,14 +42,13 @@ jobs:
           service=${{ matrix.name }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
           echo "SERVICE_NAME=$(basename "${service//-/_}")" >> $GITHUB_OUTPUT
+          echo $SERVICE_NAME
 
       - name: Download digests
         uses: actions/download-artifact@v4
-        env:
-          SERVICE_NAME: ${{ steps.env-prepare.outputs.SERVICE_NAME }}
         with:
           path: /tmp/digests
-          pattern: "digests-$SERVICE_NAME-*"
+          pattern: digests-${{ steps.env-prepare.outputs.SERVICE_NAME }}-*
           merge-multiple: true
 
       - name: Set up Docker Buildx
