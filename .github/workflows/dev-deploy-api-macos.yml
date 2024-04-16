@@ -51,11 +51,11 @@ jobs:
         include:
           - os: ubuntu-latest
             skip_redis_mongodb: false
-          - os: macos-latest
+          - os: macos-14
             skip_redis_mongodb: true
-          - os: macos-latest
+          - os: macos-14
             skip_clean_space: true
-          - os: macos-latest
+          - os: macos-14
             skip: true
 
     steps:
