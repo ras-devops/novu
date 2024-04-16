@@ -81,9 +81,8 @@ runs:
         IMAGE_TAG: ${{ github.sha }}
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
-        PLATFORM: ${{ matrix.platform }}
         REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
-        DOCKER_BUILD_ARGUMENTS: "--cache-from type=gha,scope=${{ inputs.docker_name }}-${{ matrix.platform }} --cache-to type=gha,scope=${{ inputs.docker_name }}-${{ matrix.platform }},mode=max --metadata-file metadata.json --iidfile image-id.txt --platform=${{ matrix.platform }} --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
+        DOCKER_BUILD_ARGUMENTS: "--metadata-file metadata.json --iidfile image-id.txt --platform=${{ matrix.platform }} --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
       run: |
         echo "PLATFORM=${PLATFORM}" >> $GITHUB_ENV
         echo "DOCKER_BUILD_ARGUMENTS=${DOCKER_BUILD_ARGUMENTS}" >> $GITHUB_ENV
@@ -107,7 +106,6 @@ runs:
         IMAGE_TAG: ${{ github.sha }}
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
-        PLATFORM: ${{ matrix.platform }}
       run: |
         echo "Built image"
         docker tag novu-api ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
@@ -190,7 +188,7 @@ runs:
     - name: Upload digest
       uses: actions/upload-artifact@v4
       with:
-        name: digests-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }}
+        name: digests-${{ env.SERVICE_NAME }}
         path: /tmp/digests/*
         if-no-files-found: error
         retention-days: 1

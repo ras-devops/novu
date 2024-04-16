@@ -1,0 +1,95 @@
+name: "Manifests merging MacOS"
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        description: 'Name for service'
+        required: false
+        type: string
+      custom_tag:
+        description: 'Image TAG'
+        required: false
+        type: string
+      github_token:
+        description: 'The token to use for logging into ghcr.io'
+        required: false
+        type: string
+      REGISTRY_IMAGE:
+        description: 'REGISTRY_IMAGE'
+        required: false
+        type: string
+      environment:
+        required: true
+        type: string
+      environment_short:
+        required: true
+        type: string
+
+jobs:
+  merge_digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    environment: ${{ inputs.environment }}
+    permissions:
+      packages: write
+    steps:
+      - name: Prepare
+        id: env-prepare
+        shell: bash
+        run: |
+          export service=${{ inputs.service_name }}
+          echo "SERVICE_NAME=$(basename "${service//-/_}")" >> $GITHUB_OUTPUT
+          echo "$SERVICE_NAME"
+
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digests-${{ steps.env-prepare.outputs.SERVICE_NAME }}-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        env:
+          IMAGE_TAG: ${{ inputs.custom_tag }}
+          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+          tags: ${{ env.IMAGE_TAG }}
+
+      - name: Login To Registry
+        shell: bash
+        env:
+          GH_ACTOR: ${{ github.actor }}
+          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
+
+      - name: Echo DOCKER_METADATA_OUTPUT_JSON
+        shell: bash
+        run: |
+          echo $DOCKER_METADATA_OUTPUT_JSON
+
+      - name: Create manifest list and push
+        working-directory: /tmp/digests
+        env:
+          IMAGE_TAG: ${{ inputs.custom_tag }}
+          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}  # Corrected line
+        run: |
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+
+      - name: Inspect image
+        env:
+          IMAGE_TAG: ${{ inputs.custom_tag }}
+          REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}
+        run: |
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}

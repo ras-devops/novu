@@ -87,7 +87,7 @@ jobs:
 
   push_digest:
     needs: [deploy_dev_api, get_version]
-    uses: ./.github/workflows/push-digest.yml
+    uses: ./.github/workflows/push-digest-macos.yml
     permissions:
       packages: write
     with:
