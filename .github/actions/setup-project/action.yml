@@ -81,6 +81,13 @@ runs:
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
 
+    - name: Setup docker (missing on MacOS)
+      if: runner.os == 'macos'
+      shell: bash
+      run: |
+        brew install docker
+        colima start
+
     - name: 🛟 Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
