@@ -73,7 +73,7 @@ jobs:
       - uses: ./.github/actions/docker/build-api
         id: docker_build
         with:
-          tag: ${{ needs.get_version.outputs.env_tag }}
+          tag: ${{ needs.get_version.outputs.sha }}
           push: 'true'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           docker_name: ${{ matrix.name }}
@@ -91,5 +91,5 @@ jobs:
       environment: Development
       environment_short: dev
       service_name: ${{ matrix.name }}
-      custom_tag: ${{ needs.get_version.outputs.env_tag }}
+      custom_tag: ${{ needs.get_version.outputs.sha }}
       REGISTRY_IMAGE: ghcr.io/ras-devops/${{ matrix.name }}
