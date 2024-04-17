@@ -86,7 +86,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        name: ['api-rr', 'api']
+        name: ['novu/api-rr', 'novu/api']
     with:
       environment: Development
       environment_short: dev
