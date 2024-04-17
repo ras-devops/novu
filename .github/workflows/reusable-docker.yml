@@ -81,6 +81,14 @@ jobs:
         with:
           driver-opts: 'image=moby/buildkit:v0.13.1'
 
+      - name: Login To Registry
+        shell: bash
+        env:
+          GH_ACTOR: ${{ github.actor }}
+          GH_PASSWORD: ${{ inputs.github_token }}
+        run: |
+          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
+
       - name: Build, tag, and push image to ghcr.io
         id: build-image
         if: ${{ inputs.env_tag == 'dev' || inputs.env_tag == 'stg' }}
@@ -95,7 +103,6 @@ jobs:
           GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
           DOCKER_BUILD_ARGUMENTS: "--cache-from type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }} --cache-to type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }},mode=max --metadata-file metadata.json --iidfile image-id.txt --platform=${{ matrix.platform }} --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
         run: |
-          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
           cd $PROJECT_PATH && npm run docker:build
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$ENV_TAG
