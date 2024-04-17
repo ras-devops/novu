@@ -47,7 +47,7 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        name: ['novu/api-gg', 'novu/api']
+        name: ['novu/api-aa', 'novu/api-bb']
 #        name: ['novu/api']
         platform:
           - linux/amd64
@@ -86,7 +86,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        name: ['novu/api-gg', 'novu/api']
+        name: ['novu/api-aa', 'novu/api-bb']
     with:
       environment: Development
       environment_short: dev
