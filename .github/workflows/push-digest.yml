@@ -22,9 +22,6 @@ on:
       environment:
         required: true
         type: string
-      environment_short:
-        required: true
-        type: string
 
 jobs:
   merge_digest:
