@@ -46,7 +46,6 @@ jobs:
       health_check: true
       local_tag: novu-webhook
       env_tag: ${{ needs.get_version.outputs.env_tag }}
-      depot_project_id: jbwgz4l0c0
     secrets: inherit
 
   push_git_tag:

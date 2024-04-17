@@ -66,3 +66,8 @@ RUN chown -R 1000:root .
 
 WORKDIR /usr/src/app/apps/webhook
 CMD [ "pm2-runtime", "dist/main.js" ]
+
+
+
+
+
