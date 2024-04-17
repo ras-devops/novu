@@ -35,6 +35,10 @@ on:
       env_tag:
         required: false
         type: string
+      github_token:
+        description: 'The token to use for logging into ghcr.io'
+        required: true
+        type: string
     outputs:
       docker_image:
         description: 'The image that was built'
