@@ -47,7 +47,7 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        name: ['novu/api-rr', 'novu/api']
+        name: ['novu/api-gg', 'novu/api']
 #        name: ['novu/api']
         platform:
           - linux/amd64
@@ -73,7 +73,7 @@ jobs:
       - uses: ./.github/actions/docker/build-api
         id: docker_build
         with:
-          tag: ${{ needs.get_version.outputs.sha }}
+          tag: ${{ needs.get_version.outputs.env_tag }}
           push: 'true'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           docker_name: ${{ matrix.name }}
@@ -86,10 +86,10 @@ jobs:
       packages: write
     strategy:
       matrix:
-        name: ['novu/api-rr', 'novu/api']
+        name: ['novu/api-gg', 'novu/api']
     with:
       environment: Development
       environment_short: dev
       service_name: ${{ matrix.name }}
-      custom_tag: ${{ needs.get_version.outputs.sha }}
+      custom_tag: ${{ needs.get_version.outputs.env_tag }}
       REGISTRY_IMAGE: ghcr.io/ras-devops/${{ matrix.name }}
