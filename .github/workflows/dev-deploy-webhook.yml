@@ -39,7 +39,6 @@ jobs:
     needs: get_version
     uses: ./.github/workflows/reusable-docker.yml
     with:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
       environment: Development
       package_name: novu/webhook
       project_path: apps/webhook

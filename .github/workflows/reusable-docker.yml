@@ -35,10 +35,7 @@ on:
       env_tag:
         required: false
         type: string
-      github_token:
-        description: 'The token to use for logging into ghcr.io'
-        required: true
-        type: string
+
     outputs:
       docker_image:
         description: 'The image that was built'
@@ -89,7 +86,7 @@ jobs:
         shell: bash
         env:
           GH_ACTOR: ${{ github.actor }}
-          GH_PASSWORD: ${{ inputs.github_token }}
+          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
 
