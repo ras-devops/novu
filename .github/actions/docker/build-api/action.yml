@@ -80,7 +80,7 @@ runs:
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
         REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
-        DOCKER_BUILD_ARGUMENTS: "--cache-from type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }} --cache-to type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }},mode=max --metadata-file metadata.json --iidfile image-id.txt --platform=${{ matrix.platform }} --platform=linux/amd64,linux/arm64 --provenance=false --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
+        DOCKER_BUILD_ARGUMENTS: "--cache-from type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }} --cache-to type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }},mode=max --metadata-file metadata.json --iidfile image-id.txt --platform=linux/amd64,linux/arm64 --provenance=false --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
       run: |
         echo "DOCKER_BUILD_ARGUMENTS=${DOCKER_BUILD_ARGUMENTS}" >> $GITHUB_ENV
         echo $REGISTRY_IMAGE
