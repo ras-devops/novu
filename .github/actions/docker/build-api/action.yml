@@ -54,9 +54,7 @@ runs:
     - name: Prepare
       shell: bash
       run: |
-        platform=${{ matrix.platform }}
         service=${{ matrix.name }}
-        echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
         echo "SERVICE_NAME=$(basename "${service//-/-}")" >> $GITHUB_ENV
 
     - name: Login To Registry
@@ -81,15 +79,11 @@ runs:
         IMAGE_TAG: ${{ github.sha }}
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
-        PLATFORM: ${{ matrix.platform }}
         REGISTRY_IMAGE: "ghcr.io/ras-devops/${{ inputs.docker_name }}"
-        DOCKER_BUILD_ARGUMENTS: "--cache-from type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }} --cache-to type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }},mode=max --metadata-file metadata.json --iidfile image-id.txt --platform=${{ matrix.platform }} --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
+        DOCKER_BUILD_ARGUMENTS: "--cache-from type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }} --cache-to type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }},mode=max --metadata-file metadata.json --iidfile image-id.txt --platform=${{ matrix.platform }} --platform=linux/amd64,linux/arm64 --provenance=false --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
       run: |
-        echo "PLATFORM=${PLATFORM}" >> $GITHUB_ENV
         echo "DOCKER_BUILD_ARGUMENTS=${DOCKER_BUILD_ARGUMENTS}" >> $GITHUB_ENV
-        echo $PLATFORM
         echo $REGISTRY_IMAGE
-        export PLATFORM=$PLATFORM
         export REGISTRY_IMAGE=$REGISTRY_IMAGE
         export DOCKER_BUILD_ARGUMENTS=$DOCKER_BUILD_ARGUMENTS
         export
@@ -107,7 +101,6 @@ runs:
         IMAGE_TAG: ${{ github.sha }}
         GH_ACTOR: ${{ github.actor }}
         GH_PASSWORD: ${{ inputs.github_token }}
-        PLATFORM: ${{ matrix.platform }}
       run: |
         echo "Built image"
         docker tag novu-api ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
@@ -190,7 +183,7 @@ runs:
     - name: Upload digest
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.SERVICE_NAME }}-digests-${{ env.PLATFORM_PAIR }}
+        name: ${{ env.SERVICE_NAME }}-digests
         path: /tmp/digests/*
         if-no-files-found: error
         retention-days: 1

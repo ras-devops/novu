@@ -6,8 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - next
-      - main
+      - single
     paths:
       - 'package.json'
       - 'yarn.lock'
@@ -47,11 +46,7 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        name: ['novu/api-dd', 'novu/api-ff']
-#        name: ['novu/api']
-        platform:
-          - linux/amd64
-          - linux/arm64
+        name: ['novu/api', 'novu/api-gg']
     steps:
       - uses: actions/checkout@v4
 
