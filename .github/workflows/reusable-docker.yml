@@ -167,7 +167,6 @@ jobs:
           DOCKER_NAME: ${{ inputs.docker_name }}
           PROJECT_PATH: ${{ inputs.project_path }}
         run: |
-          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
           mkdir -p /tmp/digests
           cd $PROJECT_PATH
           image_id=$(cat image-id.txt)
