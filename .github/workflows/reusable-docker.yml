@@ -105,6 +105,9 @@ jobs:
           DOCKER_BUILD_ARGUMENTS: "--cache-from type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }} --cache-to type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }},mode=max --metadata-file metadata.json --iidfile image-id.txt --platform=${{ matrix.platform }} --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
         run: |
           cd $PROJECT_PATH && npm run docker:build
+          echo "------------------------------------------------------------------"
+          docker images
+          echo "------------------------------------------------------------------"
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$ENV_TAG
           docker push ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
