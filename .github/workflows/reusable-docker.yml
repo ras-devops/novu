@@ -198,4 +198,4 @@ jobs:
     with:
       ENV_TAG: ${{ inputs.env_tag }}
       REGISTRY_IMAGE: ghcr.io/ras-devops/${{ matrix.name }}
-      SERVICE: {{ matrix.name }}
+      SERVICE: ${{ matrix.name }}
