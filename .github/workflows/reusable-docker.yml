@@ -105,9 +105,6 @@ jobs:
           DOCKER_BUILD_ARGUMENTS: "--cache-from type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }} --cache-to type=registry,ref=ghcr.io/ras-devops/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }},mode=max --metadata-file metadata.json --iidfile image-id.txt --load --platform=${{ matrix.platform }} --output=type=image,name=ghcr.io/ras-devops/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
         run: |
           cd $PROJECT_PATH && npm run docker:build
-          echo "------------------------------------------------------------------"
-          docker images
-          echo "------------------------------------------------------------------"
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$ENV_TAG
           docker push ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
@@ -145,6 +142,23 @@ jobs:
         run: |
           echo "$OUTPUT_NAME=ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
+      - name: Health check test
+        id: health-check
+        if: ${{ inputs.health_check == 'true' && (steps.build-image.outcome == 'success' || steps.build-prod-image.outcome == 'success') }}
+        env:
+          REGISTRY_OWNER: ras-devops
+          DOCKER_NAME: ${{ matrix.name }}
+          LOCAL_TAG: ${{ inputs.local_tag }}
+          IMAGE_TAG: ${{ github.sha }}
+          TEST_PORT: ${{ inputs.test_port }}
+          GH_ACTOR: ${{ github.actor }}
+          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
+        run: |
+          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
+
+          docker run --network=host --name $LOCAL_TAG -dit --env NODE_ENV=test ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
+          docker run --network=host appropriate/curl --retry 10 --retry-delay 5 --retry-connrefused http://127.0.0.1:$TEST_PORT/v1/health-check | grep 'ok'
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -159,26 +173,12 @@ jobs:
 
       - name: Export digest
         shell: bash
-        env:
-          GH_ACTOR: ${{ github.actor }}
-          GH_PASSWORD: ${{ inputs.github_token }}
-          IMAGE_TAG: ${{ github.sha }}
-          REGISTRY_OWNER: ras-devops
-          DOCKER_NAME: ${{ inputs.docker_name }}
-          PROJECT_PATH: ${{ inputs.project_path }}
+        working-directory: ${{ inputs.project_path }}
         run: |
           mkdir -p /tmp/digests
-          cd $PROJECT_PATH
           image_id=$(cat image-id.txt)
           digest=$(docker inspect --format='{{index .RepoDigests 0}}' "$image_id")
           touch "/tmp/digests/$(echo "$digest" | awk -F'@sha256:' '{print $2}')"
-          ls -la /tmp/digests/
-          echo "----------------- CAT METADATA JSON  ---------------------"
-          cat ./metadata.json
-          echo "----------------- CAT IMAGE ID ---------------------"
-          cat image-id.txt
-          echo "----------------- NEW Dicgest ------------------"
-          echo $digest
 
       - name: Upload digest
         uses: actions/upload-artifact@v4
@@ -201,20 +201,3 @@ jobs:
       service_name: ${{ matrix.name }}
       custom_tag: ${{ github.sha }}
       REGISTRY_IMAGE: ghcr.io/ras-devops/${{ matrix.name }}
-
-#      - name: Health check test
-#        id: health-check
-#        if: ${{ inputs.health_check == 'true' && (steps.build-image.outcome == 'success' || steps.build-prod-image.outcome == 'success') }}
-#        env:
-#          REGISTRY_OWNER: ras-devops
-#          DOCKER_NAME: ${{ matrix.name }}
-#          LOCAL_TAG: ${{ inputs.local_tag }}
-#          IMAGE_TAG: ${{ github.sha }}
-#          TEST_PORT: ${{ inputs.test_port }}
-#          GH_ACTOR: ${{ github.actor }}
-#          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
-#        run: |
-#          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
-#
-#          docker run --network=host --name $LOCAL_TAG -dit --env NODE_ENV=test ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
-#          docker run --network=host appropriate/curl --retry 10 --retry-delay 5 --retry-connrefused http://127.0.0.1:$TEST_PORT/v1/health-check | grep 'ok'
