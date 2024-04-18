@@ -3,24 +3,13 @@ name: "Manifests merging"
 on:
   workflow_call:
     inputs:
-      service_name:
-        description: 'Name for service'
-        required: false
-        type: string
-      custom_tag:
+      ENV_TAG:
         description: 'Image TAG'
-        required: false
-        type: string
-      github_token:
-        description: 'The token to use for logging into ghcr.io'
-        required: false
+        required: true
         type: string
       REGISTRY_IMAGE:
         description: 'REGISTRY_IMAGE'
         required: false
-        type: string
-      environment:
-        required: true
         type: string
 
 jobs:
@@ -35,9 +24,8 @@ jobs:
         id: env-prepare
         shell: bash
         run: |
-          export service=${{ inputs.service_name }}
+          export service=${{ matrix.name }}
           echo "SERVICE_NAME=$(basename "${service//-/-}")" >> $GITHUB_OUTPUT
-          echo "$SERVICE_NAME"
 
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -56,7 +44,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         env:
-          IMAGE_TAG: ${{ inputs.custom_tag }}
+          IMAGE_TAG: ${{ inputs.ENV_TAG }}
           REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}
         with:
           images: ${{ env.REGISTRY_IMAGE }}
@@ -78,7 +66,7 @@ jobs:
       - name: Create manifest list and push
         working-directory: /tmp/digests
         env:
-          IMAGE_TAG: ${{ inputs.custom_tag }}
+          IMAGE_TAG: ${{ inputs.ENV_TAG }}
           REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}  # Corrected line
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
@@ -86,7 +74,7 @@ jobs:
 
       - name: Inspect image
         env:
-          IMAGE_TAG: ${{ inputs.custom_tag }}
+          IMAGE_TAG: ${{ inputs.ENV_TAG }}
           REGISTRY_IMAGE: ${{ inputs.REGISTRY_IMAGE }}
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ env.IMAGE_TAG }}

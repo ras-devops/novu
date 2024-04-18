@@ -197,7 +197,5 @@ jobs:
       matrix:
         name: [ '${{ inputs.package_name }}-gg', '${{ inputs.package_name }}' ]
     with:
-      environment:  ${{ inputs.environment }}
-      service_name: ${{ matrix.name }}
-      custom_tag: ${{ github.sha }}
+      ENV_TAG: ${{ inputs.env_tag }}
       REGISTRY_IMAGE: ghcr.io/ras-devops/${{ matrix.name }}
