@@ -8,8 +8,12 @@ on:
         required: true
         type: string
       REGISTRY_IMAGE:
-        description: 'REGISTRY_IMAGE'
-        required: false
+        description: 'Registry of the image'
+        required: true
+        type: string
+      SERVICE:
+        description: 'The application we want to create manifest'
+        required: true
         type: string
 
 jobs:
@@ -24,7 +28,7 @@ jobs:
         id: env-prepare
         shell: bash
         run: |
-          export service=${{ matrix.name }}
+          export service=${{ inputs.SERVICE }}
           echo "SERVICE_NAME=$(basename "${service//-/-}")" >> $GITHUB_OUTPUT
 
       - name: Download digests
@@ -33,12 +37,6 @@ jobs:
           path: /tmp/digests
           pattern: ${{ steps.env-prepare.outputs.SERVICE_NAME }}-digests-*
           merge-multiple: true
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Docker meta
         id: meta
