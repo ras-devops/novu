@@ -102,13 +102,13 @@ jobs:
           GH_ACTOR: ${{ github.actor }}
           GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
           DOCKER_BUILD_ARGUMENTS: >
-            "--cache-from type=registry,ref=ghcr.io/${{ env.REGISTRY_OWNER }}/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }}
-            --cache-to type=registry,ref=ghcr.io/${{ env.REGISTRY_OWNER }}/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }},mode=max
-            --metadata-file metadata.json
-            --iidfile image-id.txt
-            --load
-            --platform=${{ matrix.platform }}
-            --output=type=image,name=ghcr.io/${{ env.REGISTRY_OWNER }}/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
+            "--cache-from type=registry,ref=ghcr.io/${{ env.REGISTRY_OWNER }}/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }}"
+            "--cache-to type=registry,ref=ghcr.io/${{ env.REGISTRY_OWNER }}/novu/cache:build-cache-${{ env.SERVICE_NAME }}-${{ env.PLATFORM_PAIR }},mode=max"
+            "--metadata-file metadata.json"
+            "--iidfile image-id.txt"
+            "--load"
+            "--platform=${{ matrix.platform }}"
+            "--output=type=image,name=ghcr.io/${{ env.REGISTRY_OWNER }}/${{ inputs.docker_name }},push-by-digest=true,name-canonical=true"
         run: |
           cd $PROJECT_PATH && npm run docker:build
           docker tag $LOCAL_TAG ghcr.io/$REGISTRY_OWNER/$DOCKER_NAME:$IMAGE_TAG
